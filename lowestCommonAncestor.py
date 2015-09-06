@@ -52,6 +52,7 @@ print("Testing lowest common ancestor in binary tree")
 root = TreeNode(1)
 root.right = TreeNode(2)
 assert(1 == sol.lowestCommonAncestor(root, root, root.right).val)
+
 root = TreeNode(3)
 root.right = TreeNode(8)
 root.right.left = TreeNode(11)
@@ -60,3 +61,5 @@ root.left = TreeNode(7)
 root.left.left = TreeNode(9)
 root.left.right = TreeNode(5)
 assert(3 == sol.lowestCommonAncestor(root, root.right.left.right, root.left.left).val)
+
+
