@@ -1,4 +1,5 @@
-import deque
+from collections import deque
+from heapq import heappush, heappop
 class Vertex(object):
 	def __init__(value):
 		self.name = value
@@ -72,6 +73,31 @@ class Traverse(object):
 		vertex.status = "DONE"
 		print(vertex.name)
 		return 
+ 
+	def dijkstra(self, graph, source):
+		"""
+		Given a graph and a source vertex, find a shortest path to all vertices
+		"""
+		distances = {}
+		# initialize
+		for vertex in graph.vertices:
+			if vertex == source:
+				distances[source] = 0
+			else:
+				distances[vertex] = float('inf')
+		# have pq of all distances
+		pq = []
+		heappush(pq, (distances[source], source))
+		while len(pq) != 0:
+			(priority, top) = heappop(pq)
+			for neighbor in top.adjList.keys():
+				# if tense, then relax
+				if distances[top] + top.adjList[neighbor] < distances[neighbor]:
+					distances[neighbor] = distances[top] + top.adjList[neighbor]
+					# add the vertex into the pq
+					heappush(pq, (distances[neighbor], neighbor))
+		return distances
+
 
 
 
