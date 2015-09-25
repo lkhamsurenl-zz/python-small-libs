@@ -55,6 +55,27 @@ class Solution(object):
             last = last.next
         return nth
 
+    def linkedListCopy(self, head):
+        """
+        Given a linked list with pointers, copy
+        """
+        curr = head
+        dummy = ListNode(None)
+        copyMap = {}
+        copyCurr = dummy
+        while curr != None:
+            if curr not in copyMap:
+                copyCurr.next = ListNode(None)
+                copyMap[curr] = copyCurr.next # add to the map 
+            if curr.val not in copyMap:
+                copyCurr.next.val = ListNode(None)
+                copyMap[curr.val] = copyCurr.next.val
+            else:
+                copyCurr.next.val = copyMap[curr.val]
+            curr = curr.next
+            copyCurr = copyCurr.next
+        return dummy.next
+
 ################################ TEST   #############################
 sol = Solution()
 ############################### reverse test ##########################
@@ -132,3 +153,19 @@ head.next.next.next = ListNode(2)
 head.next.next.next.next = ListNode(1)
 assert(True == sol.isPalindrome(head))
 print("isPalindrome LL tests passed!")
+
+########################### Linked list copy pointer ######################
+print("linked list wiht pointer copy")
+head = ListNode(None)
+head.val = ListNode(None)
+head.next = ListNode(None)
+head.next.val = head
+head.next.next = None
+
+copy = sol.linkedListCopy(head)
+assert(copy == copy.next.val)
+assert(copy.next.next == None)
+
+head = None
+copy = sol.linkedListCopy(head)
+assert(copy == None)
