@@ -1,27 +1,40 @@
 import copy
 import itertools
 class Solution(object):
-	out = []
 	def combinationSum(self, candidates, target):
-		self.recCom(candidates, 0, target, [0 for i in range(len(candidates))])
-		return self.out
+		globalList = []
+		candidates.sort()
+		self.recCom(candidates, 0, target, [], globalList)
+		return globalList
 
-	def recCom(self, candidates, index, target, currList):
-		if target < 0 or index < len(candidates):
+	def recCom(self, candidates, index, target, currList, globalList):
+		if target < 0 or index == len(candidates):
 			return
 		if target == 0:
-			lst = []
-			for i in range(len(currList)):
-				time = currList[i] # candidates[i] should appear time in list
-				lst = lst + [candidates[i] for j in range(time)]
-			self.out.append(lst)
+			globalList.append(currList)
 			return
-		times = 0
-		while times * candidates[index] <= target:
-			newList = copy.deepcopy(currList)
-			newList[index] = times
-			self.recCom(candidates, index + 1, target - times * candidates[index], newList)
-			times += 1
+		for i in xrange(index, len(candidates)):
+			self.recCom(candidates, i, target - candidates[i], currList + [candidates[i]], globalList)
+
+	def combinationSum2(self, candidates, target):
+		globalList = []
+		candidates.sort()
+		self.dfs(candidates, target, [], globalList)
+		globalList.sort()
+		return list(k for k, _ in itertools.groupby(globalList))
+
+	def dfs(self, nums, target, currList, globalList):
+		if target < 0 or len(nums) == 0:
+			return 
+		if target == 0:
+			currList.sort()
+			globalList.append(currList)
+			return
+		for num in nums:
+			newNums = copy.deepcopy(nums)
+			newNums.remove(num)
+			self.dfs(newNums, target - num, currList + [num], globalList)
+
 
 ########################## Test ###################################
 sol = Solution()
@@ -29,4 +42,11 @@ sol = Solution()
 ########################## combination sum ###################################
 print("combination sum test")
 print(sol.combinationSum([5, 10, 8, 4, 3, 12, 9], 27))
+print("all test are passed!")
+
+
+########################## combination sum2 ###################################
+print("combination sum2 test")
+print(sol.combinationSum2([10,1,2,7,6,1,5],8))
+print(sol.combinationSum2([1,2,3,4], 6))
 print("all test are passed!")
