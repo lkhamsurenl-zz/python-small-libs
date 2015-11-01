@@ -55,6 +55,32 @@ class Codec:
 			end = root
 		return [root, end]
 
+class BST(object):
+	def kthSmallest(self, root, k):
+		"""
+		Find the kthSmallest element in the BST, using in-order traversal
+		in-order traversal visit elements in BST smallest to largest order
+		"""
+		if root == None:
+			return -1 # no matching
+		m = {} # node to index mapping, also indicate which elements has been visited
+		index = 0 # current available index 
+		stack = [root] # in-order traversal stack
+		while len(stack) != 0:
+			top = stack[-1] # top element
+			if top.left != None and top.left not in m:
+				stack.append(top.left)
+			else:
+				stack.pop() # remove the top element
+				index += 1
+				if index == k:
+					# we found the kth smallest element
+					return top.val
+				m[top] = index
+				if top.right != None:
+					stack.append(top.right)
+		return -1 # k is out of bound
+
 #########					TEST				#################
 root = TreeNode(1)
 root.left = TreeNode(2)
@@ -66,4 +92,17 @@ ser = codec.serialize(root)
 assert(ser == [1, [2, [], []], [3, [], []]])
 deser = codec.deserialize(ser)
 assert(TreeEqual(deser, root))
+print("Serialize test pass!")
 
+#############				BST Kth smallest 				###################
+bst = BST()
+root = codec.deserialize([7, [3, [1, [], []], [5, [], []]], [25, [10, [], []], []]])
+assert(bst.kthSmallest(root, 1) == 1)
+assert(bst.kthSmallest(root, 2) == 3)
+assert(bst.kthSmallest(root, 3) == 5)
+assert(bst.kthSmallest(root, 4) == 7)
+assert(bst.kthSmallest(root, 5) == 10)
+assert(bst.kthSmallest(root, 6) == 25)
+assert(bst.kthSmallest(root, 7) == -1)
+
+print("BST tests pass!")
