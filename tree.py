@@ -193,31 +193,31 @@ class Traversal(object):
 		return ordering
 
 	def zigzagLevelOrder(self, root):
-        if root is None:
-            return []
-        queue = deque()
-        queue.appendleft(root)
-        queue.appendleft('#')
-        lst = [[]]
-        shouldBeReversed = False
-        while len(queue) != 0:
-            top = queue.pop() # right end element
-            if top == '#' and len(queue) != 0:
-                queue.appendleft(top)
-                if shouldBeReversed:
-                    lst[-1].reverse() # curr level si done, reverse it
-                lst.append([]) # there is a new level starting
-                shouldBeReversed = not shouldBeReversed
-            elif top  != '#':
-                lst[-1].append(top.val) # add to the last list
-                if top.left is not None:
-                    queue.appendleft(top.left) # add left side
-                if top.right is not None:
-                    queue.appendleft(top.right) # add right side
-        # check for the last level, if it should be reversed
-        if shouldBeReversed:
-            lst[-1].reverse()
-        return lst
+		if root is None:
+			return []
+		queue = deque()
+		queue.appendleft(root)
+		queue.appendleft('#')
+		lst = [[]]
+		shouldBeReversed = False
+		while len(queue) != 0:
+			top = queue.pop() # right end element
+			if top == '#' and len(queue) != 0:
+				queue.appendleft(top)
+				if shouldBeReversed:
+					lst[-1].reverse() # curr level si done, reverse it
+				lst.append([]) # there is a new level starting
+				shouldBeReversed = not shouldBeReversed
+			elif top  != '#':
+				lst[-1].append(top.val) # add to the last list
+				if top.left is not None:
+					queue.appendleft(top.left) # add left side
+				if top.right is not None:
+					queue.appendleft(top.right) # add right side
+		# check for the last level, if it should be reversed
+		if shouldBeReversed:
+			lst[-1].reverse()
+		return lst
 
 
 #########					TEST				#################
@@ -241,13 +241,10 @@ print("Serialize test pass!")
 #############				BST Kth smallest 				###################
 bst = BST()
 root = codec.deserialize([7, [3, [1, [], []], [5, [], []]], [25, [10, [], []], []]])
-assert(bst.kthSmallest(root, 1) == 1)
-assert(bst.kthSmallest(root, 2) == 3)
-assert(bst.kthSmallest(root, 3) == 5)
-assert(bst.kthSmallest(root, 4) == 7)
-assert(bst.kthSmallest(root, 5) == 10)
-assert(bst.kthSmallest(root, 6) == 25)
-assert(bst.kthSmallest(root, 7) == -1)
+for (target, want) in [(1,1), (2,3), (3,5), (4,7), (5, 10), (6, 25), (7, -1)]:
+	got = bst.kthSmallest(root, target)
+	assert got == want, \
+		"kthSmallest(root, {}) = {}; want {}".format(target, got, want)
 print("BST test pass!")
 
 #############				Level Order				###################
