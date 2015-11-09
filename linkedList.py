@@ -1,3 +1,4 @@
+from heapq import heappush, heappop
 # Definition for singly-linked list.
 class ListNode(object):
     def __init__(self, x):
@@ -119,6 +120,74 @@ class LL(object):
         head2 = mid.next
         mid.next = None
         return self.mergeSorted(self.mergeSort(head), self.mergeSort(head2))
+    def mergeKLists(self, heads):
+        h = []
+        for i in range(len(heads)):
+            head = heads[i]
+            if heads[i] != None:
+                temp = head.next
+                head.next = None
+                heappush(h, (head.val, i, head))
+                heads[i] = temp
+        merged = ListNode(-1)
+        curr = merged
+        # as long as there is a elt in heap, remove and add from the same list
+        while len(h) != 0:
+            (v, i, top) = heappop(h) # pop the min value
+            curr.next = top
+            curr = curr.next
+            if heads[i] != None: # add from the LL
+                head = heads[i]
+                temp = head.next
+                head.next = None
+                heappush(h, (head.val, i, head))
+                heads[i] = temp
+        return merged.next
+
+
+    def swapInPairs(self, head):
+        dummy = ListNode(-1) # dummy head
+        curr = dummy
+        while head != None and head.next != None:
+            temp = head.next.next
+            curr.next = head.next
+            head.next.next = head
+            head.next = None
+            curr = head
+            head = temp
+        if head != None:
+            curr.next = head
+        return dummy.next 
+
+    def rotateRight(self, head, k):
+        """
+        rotate a given LL right by k 
+        """
+        if k == 0 or head == None:
+            return head
+        dummy = ListNode(-1)
+        dummy.next = head
+        prev = self.findNthLast(dummy, k + 1)
+        newHead = prev.next
+        prev.next = None # break the chain
+        runner = newHead
+        while runner.next != None:
+            runner = runner.next
+        # runner is at the end
+        runner.next = dummy.next
+        return newHead
+
+    def remove(self, head, value):
+        dummy = ListNode(-1)
+        dummy.next = head
+        curr = dummy
+        while curr.next != None:
+            if curr.next.val == value:
+                curr.next = curr.next.next # remove the next element
+            else:
+                curr = curr.next
+        return dummy.next
+
 
     def linkedListCopy(self, head):
         """
@@ -192,12 +261,46 @@ for (l1, l2, w) in [ ([1], [2], [1,2]), ([], [], []), ([1,4,5], [2,3,6], [1,2,3,
         "mergeSorted({}, {}) = {}; want {}".format(head1, head2, got, want)
 
 ############################### Merge sort on LL ##########################
-for (l, w) in [ ([], []), ([1,4,5, 2,3,6], [1,2,3,4,5,6]), ([2,3,6,1,4,5], [1,2,3,4,5,6]) ]:
-    head = ll.fromList(l)
-    got = ll.mergeSort(head)
+for (l, w) in [ ([[], []], []), ([[1,4,5], [2,3,6]], [1,2,3,4,5,6]), ([[2,3],[6],[1],[4],[5]], [1,2,3,4,5,6]) ]:
+    heads = []
+    for lst in l:
+        heads.append(ll.fromList(lst))
+    got = ll.mergeKLists(heads)
     want = ll.fromList(w)
     assert ll.equal(got, want), \
-        "mergeSort({}) = {}; want {}".format(head, got, want)
+        "mergekLists({}) = {}; want {}".format(heads, got, want)
+
+############################### merge K lists on LL ##########################
+for (l, v, w) in [ ([], 0, []), ([1], 1, []), ([1], 2, [1]), ([1,2,3], 2, [1,3]), ([1,1], 1, []) ]:
+    head = ll.fromList(l)
+    got = ll.remove(head, v)
+    want = ll.fromList(w)
+    assert ll.equal(got, want), \
+        "remove({}, {}) = {}; want {}".format(head, v, got, want)
+
+############################### swap in pairs on LL ##########################
+for (l, w) in [ ([], []), ([1], [1]), ([1,2], [2,1]), ([1,2,3], [2,1,3]), ([1,2,3,4], [2,1,4,3]) ]:
+    head = ll.fromList(l)
+    got = ll.swapInPairs(head)
+    want = ll.fromList(w)
+    assert ll.equal(got, want), \
+        "swapInPairs({}) = {}; want {}".format(head, got, want)
+
+############################### rotate on LL ##########################
+for (l, k, w) in [ ([], 0, []), ([1], 0, [1]), ([1,2], 1, [2,1]), ([1,2,3], 2, [2,3,1]), ([1,2,3,4], 4, [1,2,3,4]) ]:
+    head = ll.fromList(l)
+    got = ll.rotateRight(head, k)
+    want = ll.fromList(w)
+    assert ll.equal(got, want), \
+        "rotateRight({}, {}) = {}; want {}".format(head, k, got, want)
+
+############################### remove on LL ##########################
+for (l, v, w) in [ ([], 0, []), ([1], 1, []), ([1], 2, [1]), ([1,2,3], 2, [1,3]), ([1,1], 1, []) ]:
+    head = ll.fromList(l)
+    got = ll.remove(head, v)
+    want = ll.fromList(w)
+    assert ll.equal(got, want), \
+        "remove({}, {}) = {}; want {}".format(head, v, got, want)
 
 ########################### Linked list copy pointer ######################
 print("linked list with pointer copy")
