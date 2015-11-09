@@ -6,16 +6,6 @@ class Vertex(object):
 		self.status = "NEW" # NEW, ACTIVE, DONE
 		self.adjList = {} # no active neightbors for now
 
-class Edge(object):
-	def __init__(self, s, d, value):
-		self.weight = value
-		self.start = s
-		self.destination = d
-
-class Graph(object):
-	def __init__(self, vertices):
-		self.vertices = vertices
-
 class Traverse(object):
 	def DFSGraph(self, graph):
 		"""
@@ -37,8 +27,10 @@ class Traverse(object):
 	def BFS(self, vertex):
 		q = deque()
 		q.appendleft(vertex)
+		ordering = []
 		while len(q) != 0:
 			top = q.pop()
+			ordering.append(top.name)
 			# DO something with current vertex here
 			for neighbor in top.adjList.keys():
 				if neighbor.status == "DONE":
@@ -49,32 +41,31 @@ class Traverse(object):
 		return 
 
 class TopologicalSort(object):
-	sortingStack = []
-	def topologicSorting(self, graph):
+	def topologicSorting(self, vertices):
 		"""
 		Topological sorting for graph
 		"""
-		self.sortingStack = [] # stack should be empty
+		s = [] # topological sorting stack
 		# add a new vertex connecting to all the vertex in the graph
 		new_source = Vertex(-1)
-		for vertex in graph.vertices:
+		for vertex in vertices:
 			new_source.adjList[vertex] = 0 # add new edge there
 		# do topSorting for starting from the new_source
-		self.topSorting(new_source)
-		return self.sortingStack[:-1] # the last one is the artificial vertex added
+		self.topSorting(new_source, s)
+		return s[:-1] # the last one is the artificial vertex added
 
-	def topSorting(self, vertex):
+	def topSorting(self, vertex, s):
 		"""
 		top sorting starting @ vertex
 		"""
 		vertex.status = "ACTIVE"
 		for neighbor in vertex.adjList.keys():
 			if neighbor.status == "NEW":
-				self.topSorting(neighbor)
+				self.topSorting(neighbor, s)
 			elif neighbor.status == "ACTIVE":
 				return 
-		self.sortingStack.append(vertex.name)
 		vertex.status = "DONE"
+		s.append(vertex.name) # add the vertex when done
 		return 
 
 	def findOrder(self, numCourses, prereqs):
@@ -91,33 +82,48 @@ class TopologicalSort(object):
 		# build the edges
 		for edge in prereqs:
 			vertices[edge[1]].adjList[vertices[edge[0]]] = 1 # add a new edge
-		g = Graph(vertices)
-		return list(reversed(self.topologicSorting(g)))
+		return list(reversed(self.topologicSorting(vertices)))
 
 class SSSP(object):
-	def dijkstra(self, graph, source):
+	def dijkstra(self, vertices, source):
 		"""
 		Given a graph and a source vertex, find a shortest path to all vertices
 		"""
-		distances = {}
+		d = {}
 		# initialize
 		for vertex in graph.vertices:
 			if vertex == source:
-				distances[source] = 0
+				d[source] = 0
 			else:
-				distances[vertex] = float('inf')
+				d[vertex] = float('inf')
 		# have pq of all distances
 		pq = []
-		heappush(pq, (distances[source], source))
+		heappush(pq, (d[source], source))
 		while len(pq) != 0:
 			(priority, top) = heappop(pq)
 			for neighbor in top.adjList.keys():
 				# if tense, then relax
-				if distances[top] + top.adjList[neighbor] < distances[neighbor]:
-					distances[neighbor] = distances[top] + top.adjList[neighbor]
+				if d[top] + top.adjList[neighbor] < d[neighbor]:
+					d[neighbor] = d[top] + top.adjList[neighbor]
 					# add the vertex into the pq
-					heappush(pq, (distances[neighbor], neighbor))
-		return distances
+					heappush(pq, (d[neighbor], neighbor))
+		return d
+		
+	def shimbel(self, vertices, s):
+		"""
+		Shimbel DP algo for finding SSSP
+		"""
+		d = {}
+		d[s] = 0
+		for v in vertices:
+			if v != s:
+				d[v] = float('inf')
+		for i in range(len(vertices)):
+			for u in vertices:
+				for v in u.adjList.keys():
+					if d[u] + u.adjList[v] < d[v]:
+						d[v] = d[u] + u.adjList[v]
+		return d
 
 
 ###########################   TEST    ####################################
@@ -125,7 +131,10 @@ class SSSP(object):
 
 ###########################   Topological sorting   ####################################
 top = TopologicalSort()
-print(top.findOrder(4, [[1,0],[2,0],[3,1],[3,2]]))
+for (l, n, w) in [ ([[1,0],[2,0],[3,1],[3,2]], 4, [[0, 1,2,3], [0,2,1,3]]) ]:
+	got = top.findOrder(n, l)
+	assert got in w, \
+		"findOrder({}, {}) = {}; want {}".format(n, l, got, want)
 
 
 
