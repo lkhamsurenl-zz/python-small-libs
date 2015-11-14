@@ -188,6 +188,32 @@ class LL(object):
                 curr = curr.next
         return dummy.next
 
+    def mix(self, head):
+        # if the head is length 0 or 1, then no mixing can be done.
+        if head == None or head.next == None:
+            return head
+        # Find the middle, then reverse the second half.
+        mid = self.findMiddle(head)
+        head2 = mid.next
+        mid.next = None
+        # reverse the head2
+        head2 = self.reverse(head2)
+        dummy = ListNode(-1) # dummy head
+        curr = dummy
+        while head2 != None:
+            # Join the first head.
+            curr.next = head
+            head = head.next
+            curr = curr.next
+            # Join the head of the second head.
+            curr.next = head2
+            head2 = head2.next
+            curr = curr.next
+        # head is length equal to head2, or longer by one.
+        if head != None:
+            curr.next = head
+        return dummy.next
+
 
     def linkedListCopy(self, head):
         """
@@ -302,6 +328,13 @@ for (l, v, w) in [ ([], 0, []), ([1], 1, []), ([1], 2, [1]), ([1,2,3], 2, [1,3])
     assert ll.equal(got, want), \
         "remove({}, {}) = {}; want {}".format(head, v, got, want)
 
+############################### MIX on LL ##########################
+for (l, w) in [ ([], []), ([1], [1]), ([1,2], [1,2]), ([1,2,3], [1,3,2]), ([1,2,3,4], [1,4,2,3]) ]:
+    head = ll.fromList(l)
+    got = ll.mix(head)
+    want = ll.fromList(w)
+    assert ll.equal(got, want), \
+        "mix({}) = {}, want {}".format(head, got, want)
 ########################### Linked list copy pointer ######################
 print("linked list with pointer copy")
 head = ListNode(None)
