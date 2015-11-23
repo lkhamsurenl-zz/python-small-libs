@@ -18,6 +18,24 @@ class Tree(object):
 			return -1
 		return 1 + max(self.height(root.right), self.height(root.left))
 
+	def maxPathSum(self, root):
+		"""
+		Max path sum in a given tree
+		"""
+		return self.__recPathSum(root)[1]
+
+	def __recPathSum(self, root):
+		"""
+		return (maxPathSum in one side with root included, maxPathSum)
+		"""
+		if root.left == None and root.right == None:
+			return (root.val, root.val)
+		(l, lm) = self.__recPathSum(root.left) if root.left != None else (0, -float('inf'))
+		l = max(0, l) 
+		(r, rm) = self.__recPathSum(root.right) if root.right != None else (0, -float('inf'))
+		r = max(0, r)
+		return (root.val + max(l, r), max(root.val + l + r, lm, rm))
+
 class Codec:
 	def ser(self, root):
 		"""
