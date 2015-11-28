@@ -125,6 +125,36 @@ class SSSP(object):
 						d[v] = d[u] + u.adjList[v]
 		return d
 
+class Tree(object):
+	def minHeightTree(self, n, edges):
+		"""
+		Given a number n (0..n-1 vertices) and edges btw them, find a min height tree roots
+		"""
+		# There can be at most 2 min height tree in the tree graph.
+		# They are located in the middle of the longest path in the tree
+		# Longest path can be found by repeatedly removing leaves
+		# We find by repeatedly removing all the leaf nodes, until there are no
+		# more than 2 left
+		vertices = {}
+		for v in range(n):
+			vertices[v] = {}
+		for edge in edges:
+			vertices[edge[0]][edge[1]] = 1 # add a edge 
+			vertices[edge[1]][edge[0]] = 1 # 
+		while n > 2:
+			# find all the leaves 
+			leaves = []
+			for v in vertices.keys():
+				if len(vertices[v]) == 1:
+					leaves.append(v)
+			for leaf in leaves:
+				for neighbor in vertices[leaf].keys():
+					vertices[neighbor].pop(leaf, None)
+				# remove leaf from list of vertices
+				vertices.pop(leaf, None)
+			n -= len(leaves)
+		return vertices.keys()
+
 
 ###########################   TEST    ####################################
 
@@ -135,6 +165,13 @@ for (l, n, w) in [ ([[1,0],[2,0],[3,1],[3,2]], 4, [[0, 1,2,3], [0,2,1,3]]) ]:
 	got = top.findOrder(n, l)
 	assert got in w, \
 		"findOrder({}, {}) = {}; want {}".format(n, l, got, want)
+
+#############					Min height tree 			#################
+tree = Tree()
+for (n, edges, want) in [ (2, [[0,1]], [0,1]), (3, [[0,1],[1,2]], [1]), (6, [[0,3],[1,3],[2,3],[3,4],[4,5]], [3,4]) ]:
+	got = tree.minHeightTree(n, edges)
+	assert got == want, \
+		"minHeightTree({}, {}) = {}; want {}".format(n, edges, got, want)
 
 
 
