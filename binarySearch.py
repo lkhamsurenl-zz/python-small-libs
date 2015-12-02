@@ -69,56 +69,46 @@ class Solution:
         else:
             return first
 sol = Solution()
-print("__________________________________________________________________")
 print("Testing binarySearch")
-assert(2 == sol.binarySearch([1,2,3,4,5], 3))
-assert(-1 == sol.binarySearch([1,2,3], 5))
-print("All test succeeded!")
+for (arr, target, want) in [ ([1,2,3,4,5], 3, 2), ([1,2,3], 5, -1), ([], 3, -1) ]:
+    got = sol.binarySearch(arr, target)
+    assert got == want, \
+        "binarySearch({}, {}) = {}; want: {}".format(arr, target, got, want)
 
-
-print("__________________________________________________________________")
 print("Testing findRotationIndex")
-assert(4 == sol.findRotationIndex([1,2,3,4,5]))
-assert(1 == sol.findRotationIndex([2, 3, 1]))
-assert(0 == sol.findRotationIndex([]))
-assert(0 == sol.findRotationIndex([7, 1, 3, 4]))
-print("All test succeeded!")
+for (arr, want) in [ ([1,2,3,4,5], 4), ([2,3,1], 1), ([], 0), ([7,1,3,4], 0) ]:
+    got = sol.findRotationIndex(arr), \
+        "findRotationIndex({}) = {}; want: {}".format(arr, got, want)
 
-
-print("__________________________________________________________________")
 print("Testing searchInRotatedArray")
-assert(4 == sol.searchInRotatedArray([1,2,3,4,5], 5))
-assert(2 == sol.searchInRotatedArray([1,2,3,4,5], 3))
-assert(-1 == sol.searchInRotatedArray([1,2,3,4,5], 9))
-assert(1 == sol.searchInRotatedArray([4, 5, 1,2,3], 5))
-assert(3 == sol.searchInRotatedArray([4, 5, 1,2,3], 2))
-print("All test succeeded!")
-print("__________________________________________________________________")
+for (arr, target, want) in [ ([1,2,3,4,5], 5, 4), ([1,2,3,4,5], 3, 2), ([1,2,3,4,5], 9, -1),\
+                             ([4,5,1,2,3], 5, 1), ([4,5,1,2,3], 2, 3) ]:
+    got = sol.searchInRotatedArray(arr, target)
+    assert got == want, \
+        "searchInRotatedArray({}, {}) = {}; want: {}".format(arr, target, got, want)
 
 print("Testing binarySearchInRangeLowestIndex")
-assert(4 == sol.binarySearchInRangeLowestIndex([1,2,3,4,5], 0, 4, 5))
-assert(2 == sol.binarySearchInRangeLowestIndex([1,2,3,4,5], 0, 4, 3))
-assert(-1 == sol.binarySearchInRangeLowestIndex([1,2,3,4,5], 0, 4, 9))
-assert(2 == sol.binarySearchInRangeLowestIndex([1,2,3,3,3,4,5], 0, 6, 3))
-assert(0 == sol.binarySearchInRangeLowestIndex([1,1,1], 0, 2, 1))
-print("All test succeeded!")
-print("__________________________________________________________________")
+for (arr, target, want) in [ ([1,2,3,4,5], 5, 4), ([1,2,3,4,5], 3, 2), ([1,2,3,4,5], 9, -1),\
+                             ([1,2,3,3,4,5], 3, 2), ([1,1,1], 1, 0), ([], 3, -1)]:
+    got = sol.binarySearchInRangeLowestIndex(arr, 0, len(arr) - 1, target)
+    assert got == want, \
+        "binarySearchInRangeLowestIndex({}, {}, {}, {}) = {}; want: {}".format(arr,\
+            0, len(arr) - 1, target, got, want)
 
 print("Testing binarySearchInRangeHighestIndex")
-assert(4 == sol.binarySearchInRangeHighestIndex([1,2,3,4,5], 0, 4, 5))
-assert(2 == sol.binarySearchInRangeHighestIndex([1,2,3,4,5], 0, 4, 3))
-assert(-1 == sol.binarySearchInRangeHighestIndex([1,2,3,4,5], 0, 4, 9))
-assert(4 == sol.binarySearchInRangeHighestIndex([1,2,3,3,3,4,5], 0, 6, 3))
-assert(2 == sol.binarySearchInRangeHighestIndex([1,1,1], 0, 2, 1))
-assert(4 == sol.binarySearchInRangeHighestIndex([5, 7, 7, 8, 8, 10], 0, 5, 8))
-print("All test succeeded!")
-print("__________________________________________________________________")
+for (arr, target, want) in [ ([1,2,3,4,5], 5, 4), ([1,2,3,4,5], 3, 2), ([1,2,3,4,5], 9, -1),\
+                             ([1,2,3,3,4,5], 3, 3), ([1,1,1], 1, 2), ([], 3, -1)]:
+    got = sol.binarySearchInRangeHighestIndex(arr, 0, len(arr) - 1, target)
+    assert got == want, \
+        "binarySearchInRangeHighestIndex({}, {}, {}, {}) = {}; want: {}".format(arr,\
+            0, len(arr) - 1, target, got, want)
 
 print("Testing binarySearchRange")
-assert([4,4] == sol.binarySearchRange([1,2,3,4,5], 5))
-assert([2,2] == sol.binarySearchRange([1,2,3,4,5], 3))
-assert([-1,-1] == sol.binarySearchRange([1,2,3,4,5], 9))
-assert([2,4] == sol.binarySearchRange([1,2,3,3,3,4,5], 3))
-assert([0,2] == sol.binarySearchRange([1,1,1], 1))
-print("All test succeeded!")
-print("__________________________________________________________________")
+for (arr, target, want) in [ ([1,2,3,4,5], 5, [4,4]), ([1,2,3,4,5], 3, [2,2]),\
+                            ([1,2,3,4,5], 9, [-1,-1]), ([1,2,3,3,3,4,5], 3, [2,4]),\
+                            ([1,1,1], 1, [0,2]) ]:
+    got = sol.binarySearchRange(arr, target)
+    assert got == want, \
+        "binarySearchRange({}, {}) = {}; want: {}".format(arr, target, got, want)
+
+print("ALL TEST PASS!!!")

@@ -11,16 +11,20 @@ class Tree(object):
 			return True
 		if not (root1 != None and root2 != None):
 			return False
-		return root1.val == root2.val and self.treeEqual(root1.left, root2.left) and self.treeEqual(root1.right, root2.right) 
+		return root1.val == root2.val and self.treeEqual(root1.left, root2.left) and \
+			   self.treeEqual(root1.right, root2.right) 
 	
 	def height(self, root):
+		"""
+		Find a height of the given tree.
+		"""
 		if root == None:
 			return -1
 		return 1 + max(self.height(root.right), self.height(root.left))
 
 	def maxPathSum(self, root):
 		"""
-		Max path sum in a given tree
+		Max path sum in a given tree.
 		"""
 		return self.__recPathSum(root)[1]
 
@@ -36,6 +40,48 @@ class Tree(object):
 		r = max(0, r)
 		return (root.val + max(l, r), max(root.val + l + r, lm, rm))
 
+	def inPostOrder(self, in_ord, post_ord):
+		"""
+		Given a in and post order traversal of the tree in list, construct the tree
+		"""
+		return self.__recInPost(in_ord, 0, len(in_ord) - 1, post_ord, 0, len(post_ord) - 1)
+
+	def __recInPost(self, in_ord, in_start, in_end, post_ord, post_start, post_end):
+		if in_start > in_end:
+			return None # base case
+		# Post order will visit the root as the last node.
+		in_root = in_start
+		while in_ord[in_root] != post_ord[post_end]:
+			in_root += 1
+		# Find end position of the left in post_ord.
+		post_left_end = post_start + in_root - in_start - 1
+		# Construct the root node.
+		root = TreeNode(post_ord[post_end])
+		root.left = self.__recInPost(in_ord, in_start, in_root - 1, post_ord, post_start, post_left_end)
+		root.right = self.__recInPost(in_ord, in_root + 1, in_end, post_ord, post_left_end + 1, post_end - 1)
+		return root
+
+	def preInOrder(self, pre_ord, in_ord):
+		"""
+		Given a pre and in order traversal of the tree in list, construct the tree
+		"""
+		return self.__recPreIn(pre_ord, 0, len(pre_ord) - 1, in_ord, 0, len(in_ord) - 1)
+
+	def __recPreIn(self, pre_ord, pre_start, pre_end, in_ord, in_start, in_end):
+		if in_start > in_end:
+			return None # base case
+		# Pre order will visit the root as the first node.
+		in_root = in_start
+		while in_ord[in_root] != pre_ord[pre_start]:
+			in_root += 1
+		# Find end position of the left in pre_ord.
+		pre_left_end = pre_start + in_root - in_start
+		# Construct the root node.
+		root = TreeNode(pre_ord[pre_start])
+		root.left = self.__recPreIn(pre_ord, pre_start + 1, pre_left_end, in_ord, in_start, in_root - 1)
+		root.right = self.__recPreIn(pre_ord, pre_left_end + 1, pre_end, in_ord, in_root + 1, in_end)
+		return root
+		
 class Codec:
 	def ser(self, root):
 		"""
@@ -273,6 +319,22 @@ assert(traversal.inOrder(root) == [2, 4, 1, 5, 3])
 assert(traversal.preOrder(root) == [1, 2, 4, 3, 5])
 assert(traversal.postOrder(root) == [4,2, 5, 3,1])
 print("Traversal test pass!")
+
+###########					In-Post Orders 			#########################
+for (i, p, w) in [ ([1], [1], [1]), ([1,2,3], [1,3,2], [2,1,3]), \
+				   ([2,4,1,5,3], [4,2,5,3,1], [1,2,3,"null", 4, 5, "null"]) ]:
+	got = tree.inPostOrder(i, p)
+	want = codec.deser(w)
+	assert tree.treeEqual(got, want), \
+		"inPostOrder({}, {}) = {}; want {}".format(i, p, codec.ser(got), codec.ser(want)) 
+
+###########					Pre-In Orders 			#########################
+for (i, p, w) in [ ([1], [1], [1]), ([1,2,3], [2,1,3], [1,2,3]), \
+				   ([1,2,4,3,5], [2,4,1,5,3], [1,2,3,"null", 4, 5, "null"]) ]:
+	got = tree.preInOrder(i, p)
+	want = codec.deser(w)
+	assert tree.treeEqual(got, want), \
+		"preInOrder({}, {}) = {}; want {}".format(i, p, codec.ser(got), codec.ser(want)) 
 
 
 
