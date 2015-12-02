@@ -49,6 +49,7 @@ class Solution:
     #############################  Rotation ################################
     def findRotationIndex(self, nums):
         return self.findRotationIndexInRange(nums, 0, len(nums) - 1)
+
     # Helper function to find rotation index in sorted array
     def findRotationIndexInRange(self, nums, low, high):
         if low >= high:
@@ -68,6 +69,7 @@ class Solution:
             return self.binarySearchInRange(nums, index + 1, len(nums) - 1, target)
         else:
             return first
+            
 sol = Solution()
 print("Testing binarySearch")
 for (arr, target, want) in [ ([1,2,3,4,5], 3, 2), ([1,2,3], 5, -1), ([], 3, -1) ]:

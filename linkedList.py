@@ -120,6 +120,7 @@ class LL(object):
         head2 = mid.next
         mid.next = None
         return self.mergeSorted(self.mergeSort(head), self.mergeSort(head2))
+
     def mergeKLists(self, heads):
         h = []
         for i in range(len(heads)):
@@ -236,6 +237,63 @@ class LL(object):
             copyCurr = copyCurr.next
         return dummy.next
 
+    def addTwoLists(self, lst1, lst2):
+        """
+        Add a 2 given LL
+        """
+        if lst1 == None:
+            return lst2
+        if lst2 == None:
+            return lst1
+        offset = 0 # offset added to the next value
+        dummy = ListNode(-1)
+        curr = dummy # runner 
+        while lst1 != None or lst2 != None or offset != 0:
+            val = offset
+            if lst1 != None:
+                val += lst1.val
+                lst1 = lst1.next
+            if lst2 != None:
+                val += lst2.val
+                lst2 = lst2.next
+            offset = val / 10
+            val = val % 10
+            curr.next = ListNode(val)
+            curr = curr.next
+        return dummy.next
+
+    def insertionSort(self, head):
+        """
+        Perform a insertionSort in a given arbitrary list
+        """
+        if head == None or head.next == None:
+            return head
+        node = head
+        head = head.next
+        node.next = None
+        head = self.insertionSort(head)
+        return self.insertToSorted(node, head)
+
+    def insertToSorted(self, node, head):
+        """
+        Insert a given node to the sorted head.
+        """
+        if head == None:
+            return node
+        dummy = ListNode(-1)
+        dummy.next = head
+        curr = dummy
+        while curr.next != None and node.val > curr.next.val:
+            curr = curr.next
+        if curr.next == None:
+            curr.next = node
+            return head
+        # Since node.val < curr.next.val, order shoudl be curr -> node -> curr.next
+        temp = curr.next
+        curr.next = node
+        node.next = temp
+        return dummy.next
+
 ################################ TEST   #############################
 ll = LL()
 ############################### reverse test ##########################
@@ -335,6 +393,25 @@ for (l, w) in [ ([], []), ([1], [1]), ([1,2], [1,2]), ([1,2,3], [1,3,2]), ([1,2,
     want = ll.fromList(w)
     assert ll.equal(got, want), \
         "mix({}) = {}, want {}".format(head, got, want)
+
+############################### addTwoLL ##########################
+for (l1, l2, w) in [ ([], [], []), ([1], [1], [2]), ([1], [1,2], [2,2]), \
+                    ([9,9], [1], [0, 0, 1]), ([9,8,5], [1,1,5], [0,0,1,1]) ]:
+    ll1 = ll.fromList(l1)
+    ll2 = ll.fromList(l2)
+    got = ll.addTwoLists(ll1, ll2)
+    want = ll.fromList(w)
+    assert ll.equal(got, want), \
+        "addTwoLists({}, {}) = {}, want {}".format(ll1, ll2, got, want)
+
+for (l, w) in [ ([], []), ([1], [1]), ([1,2], [1,2]), ([3,2,1], [1,2,3]),\
+                ([9,8,5], [5,8,9]) ]:
+    lst = ll.fromList(l)
+    got = ll.insertionSort(lst)
+    want = ll.fromList(w)
+    assert ll.equal(got, want), \
+        "insertionSort({}) = {}, want {}".format(l, got, want)
+
 ########################### Linked list copy pointer ######################
 print("linked list with pointer copy")
 head = ListNode(None)
