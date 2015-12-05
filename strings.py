@@ -26,9 +26,76 @@ class Strings(object):
 		else:
 			return False
 
+	def ser(self, d):
+		"""
+		Given a dictionary, serialize to a string
+		"""
+		output = ""
+		for key in d.keys():
+			val = d[key]
+			if isinstance(d[key], dict):
+				val = self.ser(d[key]) # recursively serialize if it's dict
+			output += "{}:{}".format(key, val)
+		return "{" + output + "}"
+
+	def deser(self, s):
+		"""
+		Given a string, deserialize it to a dict
+		"""
+		if len(s) == 2:
+			return {}
+		d = {}
+		start = 1 # start index of {
+		while start < len(s) - 1:
+			i = self.__findKey(s, start)
+			key = s[start:i]
+			start = i + 1
+			i = self.__findValue(s, start)
+			value = self.deser(s[start:i])
+			d[key] = value
+			start = i + 1
+		return d
+
+	def __findKey(self, s, start):
+		index = start
+		while index < len(s):
+			if s[index] == ":":
+				return index
+			index += 1
+		return index
+
+	def __findValue(self, s, start):
+		index = start	
+		while index < len(s):
+			if s[index] == "{":
+				end = index + 1
+				counter = 1
+				while counter != 0:
+					if s[end] == "{":
+						counter += 1
+					elif s[end] == "}":
+						counter -= 1
+					end += 1
+				return end
+			else:
+				index += 1
+		return index
+
 #######################				Test 			##########################
 s = Strings()
 for (num, want) in [ ("123", True), ("101", True), ("111", False), ("112358", True) ]:
 	got = s.additiveNumber(num)
 	assert got == want, \
 		"additiveNumber({}) = {}; want {}".format(num, got, want)
+
+##################### 		serialize dic 			#######################
+for (d, want) in [ ({}, "{}"), ({"a":"b"}, "{a:b}"), ({"a":{"b":"c"}}, "{a:{b:c}}") ]:
+	got = s.ser(d)
+	assert got == want, \
+		"ser({}) = {}; want: {}".format(d, got, want)
+
+##################### 		deserialize dic 			#######################
+for (st, want) in [ ("{}", {}), ("{a:b}", {"a":"b"}), ("{a:{b:c}}", {"a":{"b":"c"}}) ]:
+	got = s.deser(st)
+	assert got == want, \
+		"ser({}) = {}; want: {}".format(st, got, want)
