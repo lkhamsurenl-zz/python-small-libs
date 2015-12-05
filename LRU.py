@@ -7,7 +7,7 @@ class LRUCache(object):
 		"""
 		self.mapping = {} # key: (value, key_node)
 		# Double Linked list of key_nodes. Leftmost element is most recent
-		self.doubleList = DoubleList() 
+		self.ordering = DoubleList() 
 		self.capacity = capacity
 
 	def get(self, key):
@@ -29,11 +29,11 @@ class LRUCache(object):
 			return 
 		if len(self.mapping) == self.capacity:
 			# Remove element from the LL and dict
-			node_lru = self.doubleList.pop()
+			node_lru = self.ordering.pop()
 			self.mapping.pop(node_lru.val)
 		# Add key, value
 		key_node = Node(key)
-		self.doubleList.appendleft(key_node)
+		self.ordering.appendleft(key_node)
 		self.mapping[key] = (value, key_node)
 
 ################				TEST 			###################
