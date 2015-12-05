@@ -54,6 +54,13 @@ class DoubleList:
 		# node <-> self.tail
 		self.__link__(node, self.tail)
 
+	def remove(self, node):
+		# Given a node, remove from the DoubleList
+		prev = node.prev
+		next = node.next
+		# prev <-> next
+		self.__link__(prev, next)
+
 	def pop(self):
 		if self.head == self.tail:
 			return None
@@ -61,12 +68,13 @@ class DoubleList:
 		self.remove(node)
 		return node
 
-	def remove(self, node):
-		# Given a node, remove from the DoubleList
-		prev = node.prev
-		next = node.next
-		# prev <-> next
-		self.__link__(prev, next)
+	def move_left(self, node):
+		self.remove(node)
+		self.appendleft(node)
+
+	def move_right(self, node):
+		self.remove(node)
+		self.appendright(node)
 
 ######							TES 							#############
 doubleList = DoubleList()

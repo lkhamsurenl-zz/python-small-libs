@@ -14,20 +14,16 @@ class LRUCache(object):
 		if key not in self.mapping:
 			return None
 		(value, key_node) = self.mapping[key]
-		# Remove from LL
-		self.doubleList.remove(key_node)
-		# Make it the most recent element
-		self.doubleList.appendleft(key_node)
+		# Move key_node to MRU
+		self.ordering.move_left(key_node)
 		return value
 
 	def set(self, key, value):
 		if key in self.mapping:
 			# already exist, just update it in the dict and LL
 			(val, key_node) = self.mapping[key]
-			# Remove from LL
-			self.doubleList.remove(key_node)
-			# Make it most recent.
-			self.doubleList.appendleft(key_node)
+			# Move key_node to MRU
+			self.ordering.move_left(key_node)
 			# Remove the element from the dict
 			self.mapping[key] = value
 			return 
