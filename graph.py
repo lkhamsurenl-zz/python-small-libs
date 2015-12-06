@@ -6,6 +6,25 @@ class Vertex(object):
 		self.status = "NEW" # NEW, ACTIVE, DONE
 		self.adjList = {} # no active neightbors for now
 
+class Graph(object):
+	def copy(self, vertex):
+		"""
+		Copy a graph, starting from a vertex
+		"""
+		mapping = {} # Holds mapping from vertex to its copy.
+		return self.__dfs__(vertex, mapping)
+
+	def __dfs__(self, vertex, mapping):
+		copy = Vertex(vertex.name)
+		mapping[vertex] = copy
+		for neighbor in vertex.adjList.keys():
+			if neighbor not in mapping:
+				neighbor_copy = self.__dfs__(neighbor, mapping)
+				copy.adjList[neighbor_copy] = 1 # add edge 
+			else:
+				copy.adjList[mapping[neighbor]] = 1
+		return copy
+
 class Traverse(object):
 	def DFS(self, vertex):
 		vertex.status = "ACTIVE"
