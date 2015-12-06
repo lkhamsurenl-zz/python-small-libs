@@ -35,6 +35,32 @@ class Solution(object):
             for i in range(j - 1, -1, -1):
                 pal[i][j] = s[i] == s[j] and pal[i + 1][j - 1]
         return pal
+
+    def palindromePartition(self, s):
+        """
+        Given a string, return all possible ways to partition to palindromes
+        """
+        output = []
+        self.__recPartitionPalindrome__(s, 0, [], output)
+        return output
+
+    def __recPartitionPalindrome__(self, s, i, curr, output):
+        if i == len(s):
+            output.append(curr)
+            return
+        for j in range(i, len(s)):
+            if self.isPalindrome(s, i, j):
+                lst = [num for num in curr]
+                lst.append(s[i:j+1])
+                self.__recPartitionPalindrome__(s, j + 1, lst, output)
+
+    def isPalindrome(self, s, i, j):
+        while i < j:
+            if s[i] != s[j]:
+                return False
+            i += 1
+            j -= 1
+        return True
 ################################ TEST   #############################
 sol = Solution()
 
@@ -56,6 +82,7 @@ arr = sol.palindromeGenerate("aabaay")
 assert(arr[0][4] == True)
 
 print("all palindrome tests pass!")
+
 ############################### is Palindrome test ##########################
 print("palindrome partitioning test")
 assert(sol.minCut("a") == 0)
@@ -64,4 +91,11 @@ assert(sol.minCut("cut") == 2)
 assert(sol.minCut("aabaay") == 1)
 assert(sol.minCut("bb") == 0)
 
-print("all palindrome minimal partitioning tests pass!")
+############################### is Palindrome test ##########################
+for (s, want) in [ ("a", [["a"]]), ("aab", [["a", "a", "b"], ["aa", "b"]]),\
+                ("", [[]]), ("aaa", [["a", "a", "a"], ["a", "aa"], ["aa", "a"], ["aaa"]]) ]:
+    got = sol.palindromePartition(s)
+    assert got == want, \
+        "palindromePartition({}) = {}; want: {}".format(s, got, want)
+
+print("all palindrome partitioning tests pass!")

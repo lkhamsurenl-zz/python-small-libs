@@ -15,6 +15,22 @@ class Solution:
         else:
             return self.binarySearchInRange(nums, low, mid -1, target)
 
+    def binarySearchIndex(self, nums, target):
+        return self.__binarySearchIndexRange__(nums, 0, len(nums) - 1, target)
+
+    def __binarySearchIndexRange__(self, nums, low, high, target):
+        if low > high:
+            return low
+        if low == high:
+            return low if nums[low] > target else low + 1
+        mid = (high - low) / 2 + low
+        if nums[mid] < target < nums[mid + 1]:
+            return mid + 1
+        if nums[mid] <= target:
+            return self.__binarySearchIndexRange__(nums, mid + 1, high, target)
+        else:
+            return self.__binarySearchIndexRange__(nums, low, mid - 1, target)
+
     ####################### Search with Repeated Elements ##################
     # find the lowest index of target in array
     def binarySearchInRangeLowestIndex(self, nums, low, high, target):
@@ -110,6 +126,13 @@ for (arr, target, want) in [ ([1,2,3,4,5], 5, [4,4]), ([1,2,3,4,5], 3, [2,2]),\
                             ([1,2,3,4,5], 9, [-1,-1]), ([1,2,3,3,3,4,5], 3, [2,4]),\
                             ([1,1,1], 1, [0,2]) ]:
     got = sol.binarySearchRange(arr, target)
+    assert got == want, \
+        "binarySearchRange({}, {}) = {}; want: {}".format(arr, target, got, want)
+
+print("Testing binarySearchIndex")
+for (arr, target, want) in [ ([1,2,3,4,5], 5, 5), ([1,4,5], 3, 1),\
+                            ([], 9, 0), ([1,2,3,3,3,4,5], 6, 7), ([1,2,3], 2, 2) ]:
+    got = sol.binarySearchIndex(arr, target)
     assert got == want, \
         "binarySearchRange({}, {}) = {}; want: {}".format(arr, target, got, want)
 
