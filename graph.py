@@ -7,11 +7,6 @@ class Vertex(object):
 		self.adjList = {} # no active neightbors for now
 
 class Traverse(object):
-	def DFSGraph(self, graph):
-		"""
-		Depth first search traversal for graph
-		"""
-
 	def DFS(self, vertex):
 		vertex.status = "ACTIVE"
 		# do something with the vertex here
