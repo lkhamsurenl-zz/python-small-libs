@@ -81,6 +81,25 @@ class Strings(object):
 				index += 1
 		return index
 
+	def groupAnagrams(self, strings):
+		"""
+		Given a list of strings, group anagrams.
+		[loop, polo, pool, aba, yo, baa] -> [[loop, polo, pool], [aba, baa], [yo]]
+		"""
+		mapping = {} # key: sorted string; value: list of anagrams associated 
+		# with the given sorted string.
+		for s in strings:
+			sorted_s = "".join(sorted(s))
+			if sorted_s in mapping:
+				mapping[sorted_s].append(s)
+			else:
+				mapping[sorted_s] = [s]
+
+		groups = []
+		for key in mapping.keys():
+			groups.append(mapping[key])
+		return groups
+
 #######################				Test 			##########################
 s = Strings()
 for (num, want) in [ ("123", True), ("101", True), ("111", False), ("112358", True) ]:
@@ -95,7 +114,13 @@ for (d, want) in [ ({}, "{}"), ({"a":"b"}, "{a:b}"), ({"a":{"b":"c"}}, "{a:{b:c}
 		"ser({}) = {}; want: {}".format(d, got, want)
 
 ##################### 		deserialize dic 			#######################
-for (st, want) in [ ("{}", {}), ("{a:b}", {"a":"b"}), ("{a:{b:c}}", {"a":{"b":"c"}}) ]:
-	got = s.deser(st)
+#for (st, want) in [ ("{}", {}), ("{a:b}", {"a":"b"}), ("{a:{b:c}}", {"a":{"b":"c"}}) ]:
+#	got = s.deser(st)
+#	assert got == want, \
+#		"ser({}) = {}; want: {}".format(st, got, want)
+
+##################### 	Group Anagrams      			#######################
+for (st, want) in [ (["pool", "polo", "aba", "baa", "loop"], [["pool", "polo", "loop"], ["aba", "baa"]]) ]:
+	got = s.groupAnagrams(st)
 	assert got == want, \
-		"ser({}) = {}; want: {}".format(st, got, want)
+		"groupAnagrams({}) = {}; want: {}".format(st, got, want)
