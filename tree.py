@@ -4,6 +4,7 @@ class TreeNode(object):
 		self.val = x
 		self.right = None
 		self.left = None
+		self.parent = None
 
 class Tree(object):
 	def treeEqual(self, root1, root2):
@@ -182,6 +183,128 @@ class BST(object):
 					stack.append(top.right)
 		return -1 # k is out of bound
 
+	
+
+	def binarySearch(self, root, target):
+		if root == None or root.val == target:
+			return root
+		if root.val < target:
+			return self.binarySearch(root.right, target)
+		else:
+			return self.binarySearch(root.left, target)
+
+
+class AVL(object):
+	# Balanced BST
+	def __init__(self):
+		self.head = None
+
+	def insert(self, node):
+		if self.head == None:
+			self.head = node
+			return
+		self.__insert__(self.head, node)
+
+	def __insert__(self, root, node): 
+		"""
+		Recursive function to insert a node in root tree
+		"""
+		if root.val < node.val and root.right == None:
+			root.right = node
+			node.parent = root
+			return
+		elif root.val > node.val and root.left == None:
+			root.left = node
+			node.parent = root
+			return
+		elif root.val < node.val:
+			self.__insert__(root.right, node)
+		else:
+			self.__insert__(root.left, node)
+		# Balance on the node if necessary
+		self.__balance__(root)
+
+	def delete(self, node):
+		if node.right == None:
+			parent = node.parent
+			if parent == None:
+				self.head = node.left
+				node.left.parent = None
+			elif parent.left == node:
+				parent.left = node.left
+			else:
+				parent.right = node.left
+			node.left.parent = parent
+		else:
+			bigger_node = self.find_leftmost(node.right)
+			node.val = bigger_node.val
+
+			parent = bigger_node.parent
+			if parent.left == bigger_node:
+				parent.left = None
+			else:
+				parent.right = None
+
+	def find_leftmost(self, root):
+		while root.left != None:
+			root = root.left
+		return root
+
+	def __balance__(self, root):
+		"""
+		Check if the given tree root is balanced, and balance if necassary
+		"""
+		left_height = self.__height__(root.left)
+		right_height = self.__height__(root.right)
+		if abs(left_height - right_height) <= 1:
+			return
+		if left_height > right_height:
+			self.__rotate_right__(root)
+		else:
+			self.__rotate_left__(root)
+
+	def __rotate_left__(self, root):
+		parent = root.parent
+		if parent == None:
+			self.head = root.right
+		elif parent.left == root:
+			parent.left = root.right
+		else:
+			parent.right = root.right
+		root.parent = root.right
+		root.right.parent = parent
+
+		temp = root.right.left
+		root.right.left = root
+		root.right = temp
+		# fix the parent pointers
+		if temp != None:
+			temp.parent = root.left
+		
+
+	def __rotate_right__(self, root):
+		# rotate right on the given node
+		parent = root.parent
+		if parent == None:
+			self.head = root.left
+		elif parent.left == root:
+			parent.left = root.left
+		else:
+			parent.right = root.left
+		root.parent = root.left
+		root.left.parent = parent
+
+		temp = root.left.right
+		root.left.right = root
+		root.left = temp
+		if temp != None:
+			temp.parent = root.right
+
+	def __height__(self, root):
+		if root == None:
+			return -1
+		return 1 + max(self.__height__(root.left), self.__height__(root.right))
+
 class Traversal(object):
 	"""
 	Pre, In, Level and Post order traversals in tree without using any recursion
@@ -335,6 +458,15 @@ for (i, p, w) in [ ([1], [1], [1]), ([1,2,3], [2,1,3], [1,2,3]), \
 	want = codec.deser(w)
 	assert tree.treeEqual(got, want), \
 		"preInOrder({}, {}) = {}; want {}".format(i, p, codec.ser(got), codec.ser(want)) 
+
+############					AVL tree  					####################
+avl = AVL()
+avl.insert(TreeNode(1))
+avl.insert(TreeNode(2))
+avl.insert(TreeNode(5))
+avl.insert(TreeNode(3))
+avl.insert(TreeNode(4))
+print codec.ser(avl.head)
 
 
 
