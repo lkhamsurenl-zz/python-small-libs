@@ -1,3 +1,4 @@
+import copy
 # This file contains problems directly pertained to list problems.
 class List(object):
 	def alternatingList(self, lst):
@@ -7,10 +8,10 @@ class List(object):
 		if len(lst) < 2:
 			return
 		if lst[0] > lst[1]:
-			self.__swap(lst, 0, 1)
+			self.__swap__(lst, 0, 1)
 		for i in range(0, len(lst) - 2):
 			if lst[i] < lst[i+1] < lst[i+2] or lst[i] > lst[i+1] > lst[i+2]:
-				self.__swap(lst, i + 1, i + 2)
+				self.__swap__(lst, i + 1, i + 2)
 		return lst
 
 	def firstMissingPositive(self, lst):
@@ -24,13 +25,13 @@ class List(object):
 		# place all the positive numbers in a correct place in the lst
 		for i in range(len(lst)):
 			if 0 < lst[i] <= len(lst) and lst[lst[i] - 1] != lst[i]:
-				self.__swap(lst, i, lst[i] - 1)
+				self.__swap__(lst, i, lst[i] - 1)
 		for i in range(len(lst)):
 			if lst[i] != i + 1: # The + number @ this position is missing.
 				return i + 1
 		return len(lst) + 1
 
-	def __swap(self, lst, i, j):
+	def __swap__(self, lst, i, j):
 		temp = lst[i]
 		lst[i] = lst[j]
 		lst[j] = temp
@@ -62,6 +63,79 @@ class List(object):
 					longest = length # update the longest list we've seen so far
 		return longest
 
+	def move_target_back(self, lst, target):
+		"""
+		Move all the target values to the back of the array:
+		[1,2,1,0,4], 1 -> [2,0,4,1,1]
+		"""
+		non_target = 0 # next non-target value should be placed at this index.
+		for i in range(len(lst)):
+			if lst[i] != target:
+				lst[non_target] = lst[i]
+				non_target += 1
+		# non_target is the last index 
+		while non_target < len(lst):
+			lst[non_target] = target 
+			non_target += 1
+
+	def remove_duplicates(self, lst):
+		"""
+		Remove all duplicates from an array.
+		[1,1,2,3,3] -> [1,2,3]
+		Assume the given array is sorted.
+		@return: size of the non duplicate part of an array
+		"""
+		nondup = 1
+		for i in range(1, len(lst)):
+			if lst[i] != lst[i - 1]:
+				lst[nondup] = lst[i]
+				nondup += 1
+		return nondup
+
+
+	def summary_ranges(self, lst):
+		"""
+		Given list of integers, find summary ranges:
+		[1,2,3,5,6,9] -> ["1->3", "5->6", "9"]
+		"""
+		lst.sort() # Sort in case it is not sorted
+		start = 0
+		summary = [] # Holds summary output.
+		for i in range(1, len(lst)):
+			if lst[i] - lst[i - 1] > 1:
+				# No longer consecutive, so make a range.
+				current_range = "{}->{}".format(lst[start], lst[i-1]) if start != i - 1 else \
+					"{}".format(lst[start])
+				summary.append(current_range)
+				start = i # Increment the start point.
+		current_range = "{}->{}".format(lst[start], lst[len(lst)-1]) if start != len(lst) - 1 else \
+					"{}".format(lst[start])
+		summary.append(current_range)
+		return summary
+
+	def rotate(self, lst, k):
+		"""
+		Rotate given list by k position:
+		[1,2,4,5], 2 -> [4,5,1,2]
+		"""
+		if k == 0:
+			return
+		# [1,2,4,5] -> [5,4,2,1]
+		self.__flip__(lst, 0, len(lst) - 1)
+		# [5,4,2,1] -> [4,5, 2,1]
+		self.__flip__(lst, 0, k - 1)
+		# [4,5, 2,1] -> [4,5, 1,2]
+		self.__flip__(lst, k, len(lst) - 1)
+
+	def __flip__(self, lst, low, high):
+		"""
+		Flip a given array between low and high (inclusive)
+		"""
+		while low < high:
+			self.__swap__(lst, low, high)
+			low += 1
+			high -= 1
+
 #############################    TEST 		###################################
 lst = List()
 #######							Alternating List 				##############
@@ -84,3 +158,32 @@ for (l, want) in [ ([1,2,3], 3), ([3,2,1], 3), ([0,2], 1), ([0,1,2], 3), ([], 0)
 	got = lst.longestConsecutive(l)
 	assert got == want, \
 		"longestConsecutive({}) = {}; want: {}".format(l, got, want) 
+
+#######				       Move target values back 		 ##############
+for (got, target,  want) in [ ([1,2,1,4,0,1], 1, [2,4,0,1,1,1]), ([1,1,1], 1, [1,1,1]),\
+						([1,1], 2, [1,1]), ([1,4,0], 0, [1,4,0]) ]:
+	inp_arr = copy.deepcopy(got)
+	lst.move_target_back(got, target)
+	assert got == want, \
+		"move_target_back({}, {}) = {}; want: {}".format(inp_arr, target, got, want)
+
+###########						Summary Ranges 				################
+for (arr, want) in [ ([1,2,3], ["1->3"]), ([3,1,2], ["1->3"]), ([7,1,3,2,6,9], ["1->3", "6->7", "9"]) ]:
+	got = lst.summary_ranges(arr)
+	assert got == want, \
+		"summary_ranges({}) = {}; want: {}".format(arr, got, want)
+
+###########						Remove duplicates 				################
+for (got, want) in [ ([1,2,3], [1,2,3]), ([1,1], [1]), ([1,2,2,3,3,4], [1,2,3,4]) ]:
+	input_array = copy.deepcopy(got)
+	length = lst.remove_duplicates(got)
+	assert got[:length] == want, \
+		"remove_duplicates({}) = {}; want: {}".format(input_array, got, want)
+
+###########						Remove duplicates 				################
+for (got, k, want) in [ ([1,2,3], 0, [1,2,3]), ([1,1], 1, [1,1]), ([1,2,2,3,3,4], 2, [3,4,1,2,2,3]) ]:
+	input_array = copy.deepcopy(got)
+	length = lst.rotate(got, k)
+	assert got == want, \
+		"rotate({}) = {}; want: {}".format(input_array, got, want)
+
