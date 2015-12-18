@@ -100,6 +100,23 @@ class Strings(object):
 			groups.append(mapping[key])
 		return groups
 
+	def isIsomorphic(self, s, t):
+		"""
+		Given two strings, figure out if they isIsomorphic
+		(baa, foo) -> true, (foo, bar) -> false
+		"""
+		if len(s) != len(t):
+			return False
+		mapping1 = {} # Holds mapping from s to t.
+		mapping2 = {} # Holds mapping from t to s.
+		for i in range(len(s)):
+			if (s[i] in mapping1 and mapping1[s[i]] != t[i]) or (s[i] not in mapping1 and t[i] in mapping2):
+				return False
+			# All the other cases are valid, so add the mappings.
+			mapping1[s[i]] = t[i]
+			mapping2[t[i]] = s[i]
+		return True
+
 #######################				Test 			##########################
 s = Strings()
 for (num, want) in [ ("123", True), ("101", True), ("111", False), ("112358", True) ]:
@@ -124,3 +141,10 @@ for (st, want) in [ (["pool", "polo", "aba", "baa", "loop"], [["pool", "polo", "
 	got = s.groupAnagrams(st)
 	assert got == want, \
 		"groupAnagrams({}) = {}; want: {}".format(st, got, want)
+
+
+for (st, t, want) in [ ("a", "b", True), ("aa", "ab", False), ("foo", "bar", False),\
+	("foo", "baa", True), ("bar", "foo", False) ]:
+	got = s.isIsomorphic(st,t)
+	assert got == want, \
+		"isIsomorphic({}, {}) = {}; want: {}".format(st, t, got, want)
