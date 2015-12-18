@@ -117,6 +117,22 @@ class Strings(object):
 			mapping2[t[i]] = s[i]
 		return True
 
+	def reverseWords(self, s):
+		"""
+		Given a string, reverse all the words inside
+		'I love you' -> 'you love I'
+		"""
+		words = s.split(" ") # splitted words
+		low = 0
+		high = len(words) - 1
+		while low < high:
+			temp = words[low]
+			words[low] = words[high]
+			words[high] = temp
+			low += 1
+			high -= 1
+		return " ".join(words)
+
 #######################				Test 			##########################
 s = Strings()
 for (num, want) in [ ("123", True), ("101", True), ("111", False), ("112358", True) ]:
@@ -142,9 +158,14 @@ for (st, want) in [ (["pool", "polo", "aba", "baa", "loop"], [["pool", "polo", "
 	assert got == want, \
 		"groupAnagrams({}) = {}; want: {}".format(st, got, want)
 
-
+#############				isIsomorphic				#####################
 for (st, t, want) in [ ("a", "b", True), ("aa", "ab", False), ("foo", "bar", False),\
 	("foo", "baa", True), ("bar", "foo", False) ]:
 	got = s.isIsomorphic(st,t)
 	assert got == want, \
 		"isIsomorphic({}, {}) = {}; want: {}".format(st, t, got, want)
+
+for (st, want) in [ ("foo", "foo"), ("I love you", "you love I") ]:
+	got = s.reverseWords(st)
+	assert got == want, \
+		"reverseWords({}) = {}; want: {}".format(st, got, want)
