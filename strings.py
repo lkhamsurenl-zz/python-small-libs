@@ -133,6 +133,29 @@ class Strings(object):
 			high -= 1
 		return " ".join(words)
 
+	def longestCommonPrefix(self, strings):
+		"""
+		Find and return the longest common substring in all strings.
+		"""
+		commonIndex = 0 # common substring is 0:commonIndex (not including).
+		if len(strings) == 0:
+			return ""
+		minLength = len(strings[0])
+
+		# Find the min length in all strings.
+		for s in strings:
+			if len(s) < minLength:
+				minLength = len(s)
+
+		while commonIndex < minLength:
+			commonChar = strings[0][commonIndex]
+			for s in strings:
+				if s[commonIndex] != commonChar:
+					return s[:commonIndex]
+			commonIndex += 1
+		return s[:commonIndex]
+
+
 #######################				Test 			##########################
 s = Strings()
 for (num, want) in [ ("123", True), ("101", True), ("111", False), ("112358", True) ]:
@@ -169,3 +192,9 @@ for (st, want) in [ ("foo", "foo"), ("I love you", "you love I") ]:
 	got = s.reverseWords(st)
 	assert got == want, \
 		"reverseWords({}) = {}; want: {}".format(st, got, want)
+
+for (strings, want) in [ (["a", "b"], ""), (["ab", "ab"], "ab"), (["foo", "fob", "foo"], "fo"),\
+						(["foob", "foo", "foo"], "foo")]:
+	got = s.longestCommonPrefix(strings)
+	assert got == want, \
+		"longestCommonPrefix({}) = {}; want: {}".format(strings, got, want)

@@ -21,8 +21,6 @@ class Solution:
                     lowIndex = i
                     highIndex = j
         # Here we found longest substring which is palindrome
-        print lowIndex
-        print highIndex
         if lowIndex == -1 or highIndex == - 1:
             return s[0]
         return s[lowIndex:highIndex + 1]
