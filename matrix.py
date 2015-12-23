@@ -41,6 +41,30 @@ class Matrix(object):
 
 		return output
 
+	def numOfIslands(self, grid):
+		"""
+		Given a grid representing land(1) and water(0), find number of Islands.
+		"""
+		assert len(grid) != 0 and len(grid[0]) != 0,\
+			"numOfIslands(grid); grid should be non empty."
+		numIslands = 0
+		for i in range(len(grid)):
+			for j in range(len(grid[0])):
+				numIslands += self.__DFS__(grid, i, j)
+		return numIslands
+
+	def __DFS__(self, grid, i, j):
+		"""
+		Traverse the current island for all possible directions.
+		"""
+		if 0 > i or i >= len(grid) or 0 > j or j >= len(grid[0]) or grid[i][j] == 0:
+			return 0 
+		grid[i][j] = 0 # mark as visited
+		self.__DFS__(grid, i + 1, j)
+		self.__DFS__(grid, i - 1, j)
+		self.__DFS__(grid, i, j + 1)
+		self.__DFS__(grid, i, j - 1)
+		return 1
 
 #############						TEST						##############
 matrix = Matrix()
@@ -52,3 +76,10 @@ for (m, want) in [ ([[1]], [1]), \
 	got = matrix.spiralMatrix(m)
 	assert got == want, \
 		"spiralMatrix({}) = {}; want: {}".format(m, got, want)
+
+##############						numOfIslands					##########
+for (grid, want) in [ ([[1,0],[0,1]], 2), ([[1,1], [1,0]], 1), ([[1]], 1),\
+					([[1,1,0], [1,0,1], [0,1,0]], 3) ]:
+	got = matrix.numOfIslands(grid)
+	assert got == want, \
+		"numOfIslands({}) = {}; want: {}".format(grid, got, want)
