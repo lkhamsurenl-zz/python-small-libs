@@ -1,3 +1,4 @@
+import copy
 class Matrix(object):
 	"""
 	This file includes a matrix related problems.
@@ -66,6 +67,24 @@ class Matrix(object):
 		self.__DFS__(grid, i, j - 1)
 		return 1
 
+	def rotateClockwise(self, matrix):
+		"""
+		Rotate given matrix clockwise in place.
+		"""
+		length = len(matrix)
+		if length == 0:
+			return matrix
+		assert len(matrix) == len(matrix[0]), \
+			"Matrix must be square: got ({}, {})".format(len(matrix), len(matrix[0]))
+		upper = length / 2 if length % 2 == 0 else length / 2 + 1
+		for i in range(upper):
+			for j in range(length / 2):
+				temp = matrix[i][j]
+				matrix[i][j] = matrix[length - j - 1][i]
+				matrix[length - j - 1][i] = matrix[length - i - 1][length - j - 1]
+				matrix[length - i - 1][length - j - 1] = matrix[j][length - i - 1]
+				matrix[j][length - i - 1] = temp
+
 #############						TEST						##############
 matrix = Matrix()
 
@@ -83,3 +102,10 @@ for (grid, want) in [ ([[1,0],[0,1]], 2), ([[1,1], [1,0]], 1), ([[1]], 1),\
 	got = matrix.numOfIslands(grid)
 	assert got == want, \
 		"numOfIslands({}) = {}; want: {}".format(grid, got, want)
+
+for (got, want) in [ ([[1,2], [3,4]], [[3,1],[4,2]]), \
+				([[1,2,3],[4,5,6],[7,8,9]], [[7,4,1],[8,5,2],[9,6,3]]) ]:
+	m = copy.deepcopy(got)
+	matrix.rotateClockwise(got)
+	assert got == want, \
+		"rotateClockwise({}) = {}; want: {}".format(m, got, want)
