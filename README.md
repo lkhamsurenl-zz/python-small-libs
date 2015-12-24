@@ -1,2 +1,2 @@
 # PythonScripts
-Python scripts for small algorithmic problems
+Python simple libraries and usage scripts

@@ -136,6 +136,21 @@ class List(object):
 			low += 1
 			high -= 1
 
+	def productExceptSelf(self, lst):
+		"""
+		return products except itself for each number in lst
+		[1,2,3] -> [2*3,1*3,1*2]
+		"""
+		prefix = copy.deepcopy(lst) # product of elts lst[:i]
+		postfix = copy.deepcopy(lst) # product of elts lst[i:]
+		for i in range(1, len(lst)):
+			prefix[i] *= prefix[i -1]
+			postfix[len(lst) - i - 1] *= postfix[len(lst) - i]
+		for i in range(len(lst)):
+			pre = prefix[i - 1] if i != 0 else 1
+			post = postfix[i + 1] if i != len(lst) - 1 else 1
+			lst[i] = pre * post
+
 #############################    TEST 		###################################
 lst = List()
 #######							Alternating List 				##############
@@ -186,4 +201,10 @@ for (got, k, want) in [ ([1,2,3], 0, [1,2,3]), ([1,1], 1, [1,1]), ([1,2,2,3,3,4]
 	length = lst.rotate(got, k)
 	assert got == want, \
 		"rotate({}) = {}; want: {}".format(input_array, got, want)
+
+for (got, want) in [ ([1,2,3], [6,3,2]), ([1,0,2], [0,2,0]), ([0,0,1], [0,0,0]) ]:
+	arr = copy.deepcopy(got)
+	lst.productExceptSelf(got)
+	assert got == want,\
+		"productExceptSelf({}) = {}; want: {}".format(arr, got, want)
 
