@@ -72,6 +72,27 @@ def maxSum(lst):
 		MS[i] = max(MS[i - 1], lst[i] + MSI[i - 1])
 	return MS[len(lst) - 1]
 
+def editDistance(word1, word2):
+	"""
+	Find a edit distance btw 2 words, given operations: insert, delete, or
+	replace a char in a word.
+	"""
+	# ED[i][j] is a min dist btw word1[0:i] and word2[0:j] not inclusive.
+	ED = [[0 for j in range(len(word2) + 1)] for i in range(len(word1) + 1)]
+	# Base case:
+	for i in range(len(word1) + 1):
+		ED[i][0] = i
+	for j in range(len(word2) + 1):
+		ED[0][j] = j
+	# Recursive case:
+	for i in range(1, len(word1) + 1):
+		for j in range(1, len(word2) + 1):
+			if word1[i-1] == word2[j-1]:
+				ED[i][j] = min(ED[i-1][j-1], ED[i][j-1] + 1, ED[i-1][j] + 1)
+			else:
+				ED[i][j] = 1 + min(ED[i-1][j-1], ED[i][j-1], ED[i-1][j])
+	return ED[len(word1)][len(word2)]
+
 #############					TEST				##########################
 
 
@@ -96,7 +117,15 @@ for (grid, want) in [ ([[1]], 0), ([[0]], 1), ([[0,0,0],[0,1,0],[0,0,0]], 2),\
 		"uniquePathsWithObstacles({}) = {}; want: {}".format(grid, got, want)
 
 ####################			maxSum				    			###########
-for (lst, want) in [ ([1], 1), ([1,-1,2], 2), ([1,-1,3,-20], 3) ]:
+for (lst, want) in [ ([1], 1), ([1,-1,2], 2), ([1,-1,3,-20], 3),\
+	([-2,1,-3,4,-1,2,1,-5,4], 6) ]:
 	got = maxSum(lst)
 	assert got == want, \
 		"maxSum({}) = {}; want: {}".format(lst, got, want)
+
+####################			editDistance  	    			###########
+for (word1, word2, want) in [ ("a","b", 1), ("xy","xyz",1), ("abc","abc",0),\
+	("abc", "axc", 1) ]:
+	got = editDistance(word1, word2)
+	assert got == want, \
+		"editDistance({}, {}) = {}; want: {}".format(word1, word2, got, want)
