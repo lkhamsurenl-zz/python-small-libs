@@ -151,6 +151,15 @@ class List(object):
 			post = postfix[i + 1] if i != len(lst) - 1 else 1
 			lst[i] = pre * post
 
+	def wiggleSort(self, lst):
+		if len(lst) < 2:
+			return
+		if lst[0] > lst[1]:
+			self.__swap__(lst, 0, 1)
+		for i in range(1, len(lst) -1):
+			if lst[i-1] <= lst[i] <= lst[i+1] or lst[i-1] >= lst[i] >=lst[i+1]:
+				self.__swap__(lst, i, i+1)
+
 #############################    TEST 		###################################
 lst = List()
 #######							Alternating List 				##############
@@ -207,4 +216,13 @@ for (got, want) in [ ([1,2,3], [6,3,2]), ([1,0,2], [0,2,0]), ([0,0,1], [0,0,0]) 
 	lst.productExceptSelf(got)
 	assert got == want,\
 		"productExceptSelf({}) = {}; want: {}".format(arr, got, want)
+
+############				Wiggle Sort `					##################
+for (got, want) in [ ([1], [1]), ([1,2,3], [1,3,2]), ([1,5,1,1,6,4],[1,5,1,6,1,4]),\
+	([1,3,2,2,3,1], [1,3,2,3,1,2]), ([1,2,2,1,2,1,1,1,1,2,2,2],[1,2,1,2,1,2,1,2,1,2,1,2]) ]:
+	arr = copy.deepcopy(got)
+	lst.wiggleSort(got)
+	assert got == want, \
+		"wiggleSort({}) = {}; want: {}".format(arr, got ,want)
+
 
