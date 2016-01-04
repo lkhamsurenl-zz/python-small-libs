@@ -57,6 +57,22 @@ def uniquePathsWithObstacles(obstacleGrid):
 
  	return UPO[m - 1][n - 1]
 
+def minPathSum(grid):
+	"""
+	Find minimum path sum on grid, starting @ top left to bottom right.
+	"""
+	MPS = [[grid[i][j] for j in range(len(grid[0]))] for i in range(len(grid))]
+	# Base:
+	for i in range(1, len(grid)):
+		MPS[i][0] += MPS[i-1][0]
+	for j in range(1, len(grid[0])):
+		MPS[0][j] += MPS[0][j - 1]
+	# Recursive case:
+	for i in range(1, len(grid)):
+		for j in range(1, len(grid[0])):
+			MPS[i][j] = grid[i][j] + min(MPS[i-1][j], MPS[i][j-1])
+	return MPS[len(grid) - 1][len(grid[0]) - 1]
+
 def maxSum(lst):
 	"""
 	Find a maximal contingent sum.
@@ -115,6 +131,12 @@ for (grid, want) in [ ([[1]], 0), ([[0]], 1), ([[0,0,0],[0,1,0],[0,0,0]], 2),\
 	got = uniquePathsWithObstacles(grid)
 	assert got == want, \
 		"uniquePathsWithObstacles({}) = {}; want: {}".format(grid, got, want)
+
+####################			MinPathSum			###########
+for (grid, want) in [ ([[1]], 1), ([[0,0,0],[10,1,0],[0,0,0]], 0) ]:
+	got = minPathSum(grid)
+	assert got == want, \
+		"minPathSum({}) = {}; want: {}".format(grid, got, want)
 
 ####################			maxSum				    			###########
 for (lst, want) in [ ([1], 1), ([1,-1,2], 2), ([1,-1,3,-20], 3),\
