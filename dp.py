@@ -109,6 +109,26 @@ def editDistance(word1, word2):
 				ED[i][j] = 1 + min(ED[i-1][j-1], ED[i][j-1], ED[i-1][j])
 	return ED[len(word1)][len(word2)]
 
+def longestIncreasingSubsequence(lst):
+	"""
+	Find length of the longestIncreasingSubsequence in a list.
+	"""
+	# LIS[i][j] = length of longestIncreasingSubsequence in 0..i s.t smaller
+	# than lst[j]
+	l = len(lst)
+	lst.append(float('inf'))
+	LIS = [[0 for j in range(l + 1)] for i in range(l)]
+	# Base case:
+	for i in range(l + 1):
+		LIS[0][i] = 1 if lst[i] > lst[0] else 0
+	# Recursive case:
+	for i in range(1, l):
+		for j in range(0, l + 1):
+			LIS[i][j] = LIS[i - 1][j]
+			if lst[i] < lst[j]:
+				LIS[i][j] = max(LIS[i][j], 1 + LIS[i-1][i])
+	return LIS[l-1][l]
+
 #############					TEST				##########################
 
 
@@ -151,3 +171,10 @@ for (word1, word2, want) in [ ("a","b", 1), ("xy","xyz",1), ("abc","abc",0),\
 	got = editDistance(word1, word2)
 	assert got == want, \
 		"editDistance({}, {}) = {}; want: {}".format(word1, word2, got, want)
+
+####################			longestIncreasingSubseq		       ###########
+for (lst, want) in [ ([1], 1), ([1,-1,2], 2), ([1,-1,3,20], 3),\
+	([10, 9, 2, 5, 3, 7, 101, 18], 4) ]:
+	got = longestIncreasingSubsequence(lst)
+	assert got == want, \
+		"longestIncreasingSubsequence({}) = {}; want: {}".format(lst, got, want)
