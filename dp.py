@@ -129,6 +129,22 @@ def longestIncreasingSubsequence(lst):
 				LIS[i][j] = max(LIS[i][j], 1 + LIS[i-1][i])
 	return LIS[l-1][l]
 
+def houseRob(lst):
+	"""
+	Given lst of houses with money on each, find maximal money one can rob.
+	adjacent houses have security system connected and it will automatically
+	contact the police if two adjacent houses were broken into on the same night.
+	"""
+	# HR[i + 1] maximum money possible to rob btw houses 0 to i
+	HR = [0 for i in range(len(lst) + 1)]
+	# Base case:
+	HR[0] = 0
+	HR[1] = lst[0]
+	# Recursive case:
+	for i in range(2, len(lst) + 1):
+		HR[i] = max(lst[i-1] + HR[i - 2], HR[i-1])
+	return HR[len(lst)]
+
 #############					TEST				##########################
 
 
@@ -178,3 +194,10 @@ for (lst, want) in [ ([1], 1), ([1,-1,2], 2), ([1,-1,3,20], 3),\
 	got = longestIncreasingSubsequence(lst)
 	assert got == want, \
 		"longestIncreasingSubsequence({}) = {}; want: {}".format(lst, got, want)
+
+####################			houseRobb					       ###########
+for (lst, want) in [ ([1], 1), ([4,3,1], 5), ([1,1,3,20], 21),\
+	([10, 9, 2, 5, 3, 7, 101, 18], 116) ]:
+	got = houseRob(lst)
+	assert got == want, \
+		"houseRob({}) = {}; want: {}".format(lst, got, want)
