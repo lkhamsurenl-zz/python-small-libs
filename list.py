@@ -1,4 +1,5 @@
 import copy
+from heapq import heappush, heappop
 # This file contains problems directly pertained to list problems.
 class List(object):
 	def alternatingList(self, lst):
@@ -160,6 +161,24 @@ class List(object):
 			if lst[i-1] <= lst[i] <= lst[i+1] or lst[i-1] >= lst[i] >=lst[i+1]:
 				self.__swap__(lst, i, i+1)
 
+	def mergeSortedLists(self, lsts):
+		"""
+		Merge list of sorted lists.
+		"""
+		heap = []
+		merged_list = []
+		for i in range(len(lsts)):
+			if len(lsts[i]) != 0:
+				# push (value, index in lsts, current index)
+				heappush(heap, (lsts[i][0], i, 0))
+		while len(heap) != 0:
+			(value, i, index) = heappop(heap)
+			merged_list.append(value)
+			# Add from the current list, if it's not finished.
+			if index + 1 < len(lsts[i]):
+				heappush(heap, (lsts[i][index + 1], i, index + 1))
+		return merged_list
+
 #############################    TEST 		###################################
 lst = List()
 #######							Alternating List 				##############
@@ -211,18 +230,17 @@ for (got, k, want) in [ ([1,2,3], 0, [1,2,3]), ([1,1], 1, [1,1]), ([1,2,2,3,3,4]
 	assert got == want, \
 		"rotate({}) = {}; want: {}".format(input_array, got, want)
 
+###########						product except self 	    	################
 for (got, want) in [ ([1,2,3], [6,3,2]), ([1,0,2], [0,2,0]), ([0,0,1], [0,0,0]) ]:
 	arr = copy.deepcopy(got)
 	lst.productExceptSelf(got)
 	assert got == want,\
 		"productExceptSelf({}) = {}; want: {}".format(arr, got, want)
 
-############				Wiggle Sort `					##################
-for (got, want) in [ ([1], [1]), ([1,2,3], [1,3,2]), ([1,5,1,1,6,4],[1,5,1,6,1,4]),\
-	([1,3,2,2,3,1], [1,3,2,3,1,2]), ([1,2,2,1,2,1,1,1,1,2,2,2],[1,2,1,2,1,2,1,2,1,2,1,2]) ]:
-	arr = copy.deepcopy(got)
-	lst.wiggleSort(got)
+###########						merge sorted lists 				################
+for (lsts, want) in [([[1], [2], [3]], [1,2,3]), \
+	([[1,5],[2,4],[0,3]], range(6)), ([[1,6],[2,7],[3,4,5],[0]],range(8))]:
+	got = lst.mergeSortedLists(lsts)
 	assert got == want, \
-		"wiggleSort({}) = {}; want: {}".format(arr, got ,want)
-
+		"mergeSortedLists({}) = {}; want: {}".format(lsts, got, want)
 

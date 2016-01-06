@@ -7,11 +7,12 @@ class MedianFinder:
 		# min heap holds elements greater than the median
 		self.minheap = []
 		self.minsize = 0
-		# max heap holds median and smaller elements
+		# max heap holds median and smaller elements, but in negation.
 		self.maxheap = []
 		self.maxsize = 0
+
 	def addNum(self, num):
-		# INVARIANT: self.maxsize >= self.minsize
+		# INVARIANT: |self.maxsize - self.minsize| <= 1
 		if self.maxsize == 0 or -self.maxheap[0] >=num:
 			heappush(self.maxheap, -num)
 			self.maxsize += 1
@@ -20,10 +21,12 @@ class MedianFinder:
 			self.minsize += 1
 		# INVARIANT: maxheap always holds the median
 		if self.maxsize - self.minsize > 1:
+			# Remove from maxheap, then put it to the minheap.
 			heappush(self.minheap, -heappop(self.maxheap))
 			self.minsize += 1
 			self.maxsize -= 1
 		elif self.minsize > self.maxsize:
+			# Remove from the minheap, put to the maxheap.
 			heappush(self.maxheap, -heappop(self.minheap))
 			self.minsize -= 1
 			self.maxsize += 1
