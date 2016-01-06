@@ -145,6 +145,28 @@ def houseRob(lst):
 		HR[i] = max(lst[i-1] + HR[i - 2], HR[i-1])
 	return HR[len(lst)]
 
+def interleavingStrings(s1, s2, s3):
+	"""
+	Check if interleaving s1 and s2 can form s3.
+	"""
+	if (len(s1) + len(s2)) != len(s3):
+		return False # lengths do not add up.
+	# IS[i][j] = True <=> interleaving s1[:i] and s2[:j] can form s3[:i + j]
+	IS = [[False for j in range(len(s2) + 1)] for i in range(len(s1) + 1)]
+	# Base case:
+	for i in range(len(s1) + 1):
+		IS[i][0] = s1[:i] == s3[:i]
+	for j in range(len(s2) + 1):
+		IS[0][j] = s2[:j] == s3[:j]
+	# Recursive case:
+	for i in range(1, len(s1) + 1):
+		for j in range(1, len(s2) + 1):
+			if s1[i - 1] == s3[i + j - 1]:
+				IS[i][j] = IS[i][j] or IS[i - 1][j]
+			if s2[j - 1] == s3[i + j - 1]:
+				IS[i][j] = IS[i][j] or IS[i][j - 1]
+	return IS[len(s1)][len(s2)]
+
 #############					TEST				##########################
 
 
@@ -201,3 +223,11 @@ for (lst, want) in [ ([1], 1), ([4,3,1], 5), ([1,1,3,20], 21),\
 	got = houseRob(lst)
 	assert got == want, \
 		"houseRob({}) = {}; want: {}".format(lst, got, want)
+
+####################			Interleaving Strings  	     		###########
+for (s1, s2, s3, want) in [ ("","", "", True), ("","xyz","xyz", True), \
+	("abc", "", "abc", True), ("a", "b", "c", False), ("a", "b", "ba", True), \
+	("a", "b", "ab", True), ("axz", "byd", "dybaxz", False) ]:
+	got = interleavingStrings(s1, s2, s3)
+	assert got == want, \
+		"interleavingStrings({},{},{})= {}; want: {}".format(s1,s2,s3,got,want)
