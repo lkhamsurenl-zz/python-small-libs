@@ -167,6 +167,36 @@ def interleavingStrings(s1, s2, s3):
 				IS[i][j] = IS[i][j] or IS[i][j - 1]
 	return IS[len(s1)][len(s2)]
 
+def isScramble(s1, s2):
+	"""
+	Check if s1 is scramble of s2: create recursive binary tree from string 
+	and switch any node's two children will form s2.
+	"""
+	if len(s1) != len(s2):
+		return False
+	length = len(s1)
+	# scramble[i][j][l] = True if s1[i:i + l] scramble of s2[j:j+l]
+	scramble = [[[False for l in range(length + 1)]for j in range(length)] \
+		for i in range(length)]
+	# Base case:
+	for i in range(length):
+		for j in range(length):
+			scramble[i][j][0] = True
+			scramble[i][j][1] = s1[i] == s2[j]
+	# Recursive case:
+	for l in range(1, length + 1):
+		for i in range(0, length - l + 1):
+			for j in range(0, length - l + 1):
+				for k in range(1, l):
+						if scramble[i][j][k] and scramble[i+k][j+k][l-k]:
+							# If no scramble happened @ k.
+							scramble[i][j][l] = True
+						if scramble[i][j+l-k][k] and scramble[i+k][j][l-k]:
+							# If we scrambles @ k.
+							scramble[i][j][l] = True
+
+	return scramble[0][0][length]
+
 #############					TEST				##########################
 
 
@@ -231,3 +261,11 @@ for (s1, s2, s3, want) in [ ("","", "", True), ("","xyz","xyz", True), \
 	got = interleavingStrings(s1, s2, s3)
 	assert got == want, \
 		"interleavingStrings({},{},{})= {}; want: {}".format(s1,s2,s3,got,want)
+
+####################			Scramble Strings  	        		###########
+for (s1, s2, want) in [ ("ab","a", False), ("xyz","xyz", True), \
+	("abc", "cba", True), ("a", "b", False), ("ab", "ba", True), \
+	("great", "grate", True), ("great", "rgtae", True) ]:
+	got = isScramble(s1, s2)
+	assert got == want, \
+		"isScramble({},{})= {}; want: {}".format(s1, s2, got, want)
