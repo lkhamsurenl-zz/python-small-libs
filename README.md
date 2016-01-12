@@ -1,2 +1,3 @@
-# PythonScripts
-Python simple libraries and usage scripts
+# python-small-libs
+
+Minor python libraries with usages in algorithmic problems
