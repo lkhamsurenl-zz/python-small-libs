@@ -31,15 +31,16 @@ class Solution:
 				groupB ^= num
 		return [groupA, groupB]
 
-################################ TEST  ###############################################
+################################ TEST  #########################################
 sol = Solution()
-################################ TEST  ###############################################
-print("Testing singleNumber")
-assert(2 == sol.singleNumber([1,2,3,1,3]))
-assert(1 == sol.singleNumber([1,-2,-2,3,3]))
-assert(0 == sol.singleNumber([0,1,1]))
-################################ TEST  ###############################################
-print("Testing singleNumber2")
-print(sol.singleNumber2([1,2,3,3]))
-assert(set([1,2]) == set(sol.singleNumber2([1,2,3,3,4,4])))
+################################ TEST  #########################################
+for (want, lst) in [(2, [1,2,3,1,3]), (1, [1,-2,-2,3,3]), (0, [0,1,1])]:
+	got = sol.singleNumber(lst)
+	assert got == want, \
+		"singleNumber({}) = {}; want: {}".format(lst, got, want)
 
+################################ TEST  #########################################
+for (lst, want) in [([1,2,3,3], [1,2])]:
+	got = sol.singleNumber2(lst)
+	assert set(got) == set(want), \
+		"singleNumber2({}) = {}; want: {}".format(lst, got, want)
