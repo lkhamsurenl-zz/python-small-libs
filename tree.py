@@ -193,6 +193,24 @@ class BST(object):
 		else:
 			return self.binarySearch(root.left, target)
 
+	def lowestCommonAncestor(self, root, node1, node2):
+		"""
+		Find the lowest common ancestor of valid nodes node1, node2 in BST
+		"""
+		if root == None:
+			return None # No valid common ancestor exist.
+		if node1 == node2:
+			return node1 # Nodes are same, so can safely return.
+		# Make node1 always smaller than node2.
+		if node1.val > node2.val:
+			temp = node1
+			node1 = node2
+			node2 = temp
+		if node1.val <= root.val <= node2.val:
+			return root
+		if node2.val < root.val:
+			return self.lowestCommonAncestor(root.left, node1, node2)
+		return self.lowestCommonAncestor(root.right, node1, node2)
 
 class AVL(object):
 	# Balanced BST
