@@ -82,7 +82,48 @@ class Tree(object):
 		root.left = self.__recPreIn(pre_ord, pre_start + 1, pre_left_end, in_ord, in_start, in_root - 1)
 		root.right = self.__recPreIn(pre_ord, pre_left_end + 1, pre_end, in_ord, in_root + 1, in_end)
 		return root
+
+	def lowest-common-ancestor(self, root, node1, node2):
+		"""
+		Given a tree with root, find a lowest common ancestor of node1 and node2
+		"""
+		prefix = self.__common-prefix__(self.__getEncoding__(root, node1),\
+			self.__getEncoding__(root, node2))
+		return self.__traverseEncoding__(root, prefix)
 		
+	def __get-encoding__(self, root, node):
+		"""
+		Get encoding for node in root: 0 -> left, 1 -> right
+		"""
+		if root == None:
+			return "" # no valid encoding
+		if root.left.val == node.val:
+			return "0"
+		if root.right.val == node.val:
+			return "1" # right side encoded as 1
+		l = self.__getEncoding__(root.left, node)
+		if len(l) > 0:
+			return "0" + l
+		else:
+			return "1" + self.__getEncoding__(root.right, node)
+
+	def __common-prefix__(self, encoding1, encoding2):
+		i = 0
+		while i < len(encoding1) and i < len(encoding2) and encoding1[i] == encoding2[i]:
+			i += 1
+		encoding1[:i]
+
+	def __traverse-encoding__(self, root, enc):
+		"""
+		Given a encoding, follow it to get the node in that encoding.
+		"""
+		node = root
+		i = 0 
+		while i < len(enc):
+			node = root.left if enc[i] == "0" else root.right
+			i += 1
+		return node
+
 class Codec:
 	def ser(self, root):
 		"""
