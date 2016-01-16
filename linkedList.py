@@ -303,19 +303,18 @@ class LL(object):
         odd = odd_head
         even_head = ListNode(-1) # even head
         even = even_head
-        curr = head
-        i = 1
-        while curr != None:
-            temp = curr.next
-            curr.next = None
+        i = 1 # even vs odd tracker.
+        while head != None:
+            temp = head.next
+            head.next = None
             if i % 2 == 1:
-                odd.next = curr
+                odd.next = head
                 odd = odd.next
             else:
-                even.next = curr
+                even.next = head
                 even = even.next
             # move element and index
-            curr = temp
+            head = temp
             i += 1
         # Finished separating, zip them together by adding even_head to odd.
         odd.next = even_head.next
