@@ -294,6 +294,33 @@ class LL(object):
         node.next = temp
         return dummy.next
 
+    def oddEvenList(self, head):
+        """
+        Change given LL so that add odd indexed are in the front, followed by
+        even indexed elements.
+        """
+        odd_head = ListNode(-1) # odd head
+        odd = odd_head
+        even_head = ListNode(-1) # even head
+        even = even_head
+        curr = head
+        i = 1
+        while curr != None:
+            temp = curr.next
+            curr.next = None
+            if i % 2 == 1:
+                odd.next = curr
+                odd = odd.next
+            else:
+                even.next = curr
+                even = even.next
+            # move element and index
+            curr = temp
+            i += 1
+        # Finished separating, zip them together by adding even_head to odd.
+        odd.next = even_head.next
+        return odd_head.next
+
 ################################ TEST   #############################
 ll = LL()
 ############################### reverse test ##########################
@@ -411,6 +438,15 @@ for (l, w) in [ ([], []), ([1], [1]), ([1,2], [1,2]), ([3,2,1], [1,2,3]),\
     want = ll.fromList(w)
     assert ll.equal(got, want), \
         "insertionSort({}) = {}, want {}".format(l, got, want)
+
+############################### oddEvenList Test ##########################
+for (l, w) in [ ([], []), ([1], [1]), ([1,2], [1,2]), ([1,2,3], [1, 3, 2]), \
+    ([1,2,3,4], [1,3,2,4]) ]:
+    lst = ll.fromList(l)
+    got = ll.oddEvenList(lst)
+    want = ll.fromList(w)
+    assert ll.equal(got, want), \
+        "oddEvenList({}) = {}, want {}".format(lst, got, want)
 
 ########################### Linked list copy pointer ######################
 print("linked list with pointer copy")
