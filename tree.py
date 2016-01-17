@@ -253,117 +253,6 @@ class BST(object):
 			return self.lowestCommonAncestor(root.left, node1, node2)
 		return self.lowestCommonAncestor(root.right, node1, node2)
 
-class AVL(object):
-	# Balanced BST
-	def __init__(self):
-		self.head = None
-
-	def insert(self, node):
-		if self.head == None:
-			self.head = node
-			return
-		self.__insert__(self.head, node)
-
-	def __insert__(self, root, node): 
-		"""
-		Recursive function to insert a node in root tree
-		"""
-		if root.val < node.val and root.right == None:
-			root.right = node
-			node.parent = root
-			return
-		elif root.val > node.val and root.left == None:
-			root.left = node
-			node.parent = root
-			return
-		elif root.val < node.val:
-			self.__insert__(root.right, node)
-		else:
-			self.__insert__(root.left, node)
-		# Balance on the node if necessary
-		self.__balance__(root)
-
-	def delete(self, node):
-		if node.right == None:
-			parent = node.parent
-			if parent == None:
-				self.head = node.left
-				node.left.parent = None
-			elif parent.left == node:
-				parent.left = node.left
-			else:
-				parent.right = node.left
-			node.left.parent = parent
-		else:
-			bigger_node = self.find_leftmost(node.right)
-			node.val = bigger_node.val
-
-			parent = bigger_node.parent
-			if parent.left == bigger_node:
-				parent.left = None
-			else:
-				parent.right = None
-
-	def find_leftmost(self, root):
-		while root.left != None:
-			root = root.left
-		return root
-
-	def __balance__(self, root):
-		"""
-		Check if the given tree root is balanced, and balance if necassary
-		"""
-		left_height = self.__height__(root.left)
-		right_height = self.__height__(root.right)
-		if abs(left_height - right_height) <= 1:
-			return
-		if left_height > right_height:
-			self.__rotate_right__(root)
-		else:
-			self.__rotate_left__(root)
-
-	def __rotate_left__(self, root):
-		parent = root.parent
-		if parent == None:
-			self.head = root.right
-		elif parent.left == root:
-			parent.left = root.right
-		else:
-			parent.right = root.right
-		root.parent = root.right
-		root.right.parent = parent
-
-		temp = root.right.left
-		root.right.left = root
-		root.right = temp
-		# fix the parent pointers
-		if temp != None:
-			temp.parent = root.left
-		
-
-	def __rotate_right__(self, root):
-		# rotate right on the given node
-		parent = root.parent
-		if parent == None:
-			self.head = root.left
-		elif parent.left == root:
-			parent.left = root.left
-		else:
-			parent.right = root.left
-		root.parent = root.left
-		root.left.parent = parent
-
-		temp = root.left.right
-		root.left.right = root
-		root.left = temp
-		if temp != None:
-			temp.parent = root.right
-
-	def __height__(self, root):
-		if root == None:
-			return -1
-		return 1 + max(self.__height__(root.left), self.__height__(root.right))
-
 class Traversal(object):
 	"""
 	Pre, In, Level and Post order traversals in tree without using any recursion
@@ -482,7 +371,6 @@ ser = codec.ser(root)
 assert(ser == [1,2,3])
 deser = codec.deser([1,2,3])
 assert(tree.treeEqual(deser, root))
-print("Serialize test pass!")
 
 #############				BST Kth smallest 				###################
 bst = BST()
@@ -491,7 +379,6 @@ for (target, want) in [(1,1), (2,3), (3,5), (4,7), (5, 10), (6, 25), (7, -1)]:
 	got = bst.kthSmallest(root, target)
 	assert got == want, \
 		"kthSmallest(root, {}) = {}; want {}".format(target, got, want)
-print("BST test pass!")
 
 #############				Level Order				###################
 traversal = Traversal()
@@ -500,7 +387,6 @@ assert(traversal.levelOrder(root) == [1,2,3, 4, 5])
 assert(traversal.inOrder(root) == [2, 4, 1, 5, 3])
 assert(traversal.preOrder(root) == [1, 2, 4, 3, 5])
 assert(traversal.postOrder(root) == [4,2, 5, 3,1])
-print("Traversal test pass!")
 
 ###########					In-Post Orders 			#########################
 for (i, p, w) in [ ([1], [1], [1]), ([1,2,3], [1,3,2], [2,1,3]), \
@@ -535,15 +421,3 @@ want = t.left
 got = tree.lowestCommonAncestor(t, t.left.left, t.left.right)
 assert got != None and got.val == want.val, \
 		"lowestCommonAncestor({}) = {}; want {}".format(t, got.val, want.val) 
-
-############					AVL tree  					####################
-avl = AVL()
-avl.insert(TreeNode(1))
-avl.insert(TreeNode(2))
-avl.insert(TreeNode(5))
-avl.insert(TreeNode(3))
-avl.insert(TreeNode(4))
-print codec.ser(avl.head)
-
-
-
