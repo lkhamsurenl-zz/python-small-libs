@@ -23,12 +23,14 @@ class Solution:
         num[index -1 ] = num[placeInd]
         num[placeInd] = temp
         return num
+
     def findDescend(self, num):
         lastDes = 0
         for i in range(1, len(num)):
             if num[i - 1] < num[i]:
                 lastDes = i
         return lastDes
+        
     def findInd(self, num, index):
         placeInd = index
         while placeInd < len(num):

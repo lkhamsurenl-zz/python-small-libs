@@ -13,8 +13,6 @@ class MinStack:
 
     # @return nothing
     def pop(self):
-        print self.innerStack
-        print self.min
         if len(self.innerStack) == 0:
             print "Stack is empty"
             return
@@ -28,8 +26,6 @@ class MinStack:
 
     # @return an integer
     def top(self):
-        print self.innerStack
-        print self.min
         if len(self.innerStack) == 0:
             print "Stack is empty"
             return
