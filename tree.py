@@ -83,15 +83,15 @@ class Tree(object):
 		root.right = self.__recPreIn(pre_ord, pre_left_end + 1, pre_end, in_ord, in_root + 1, in_end)
 		return root
 
-	def lowest-common-ancestor(self, root, node1, node2):
+	def lowestCommonAncestor(self, root, node1, node2):
 		"""
 		Given a tree with root, find a lowest common ancestor of node1 and node2
 		"""
-		prefix = self.__common-prefix__(self.__getEncoding__(root, node1),\
+		prefix = self.__commonPrefix__(self.__getEncoding__(root, node1),\
 			self.__getEncoding__(root, node2))
 		return self.__traverseEncoding__(root, prefix)
 		
-	def __get-encoding__(self, root, node):
+	def __getEncoding__(self, root, node):
 		"""
 		Get encoding for node in root: 0 -> left, 1 -> right
 		"""
@@ -107,13 +107,13 @@ class Tree(object):
 		else:
 			return "1" + self.__getEncoding__(root.right, node)
 
-	def __common-prefix__(self, encoding1, encoding2):
+	def __commonPrefix__(self, encoding1, encoding2):
 		i = 0
 		while i < len(encoding1) and i < len(encoding2) and encoding1[i] == encoding2[i]:
 			i += 1
-		encoding1[:i]
+		return encoding1[:i]
 
-	def __traverse-encoding__(self, root, enc):
+	def __traverseEncoding__(self, root, enc):
 		"""
 		Given a encoding, follow it to get the node in that encoding.
 		"""
@@ -517,6 +517,24 @@ for (i, p, w) in [ ([1], [1], [1]), ([1,2,3], [2,1,3], [1,2,3]), \
 	want = codec.deser(w)
 	assert tree.treeEqual(got, want), \
 		"preInOrder({}, {}) = {}; want {}".format(i, p, codec.ser(got), codec.ser(want)) 
+
+###########					Lowest Common ancestor		########################
+# Test root is returned correctly when adding two elements on the two children.
+t = codec.deser([1])
+t.left = TreeNode(2)
+t.right = TreeNode(3)
+want = t
+got = tree.lowestCommonAncestor(t, t.left, t.right)
+assert got != None and got.val == want.val, \
+		"lowestCommonAncestor({}) = {}; want {}".format(t, got.val, want.val) 
+# Add two nodes on the left side of the tree.
+t = codec.deser([1,2,3])
+t.left.left = TreeNode(4)
+t.left.right = TreeNode(5)
+want = t.left
+got = tree.lowestCommonAncestor(t, t.left.left, t.left.right)
+assert got != None and got.val == want.val, \
+		"lowestCommonAncestor({}) = {}; want {}".format(t, got.val, want.val) 
 
 ############					AVL tree  					####################
 avl = AVL()
