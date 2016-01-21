@@ -85,6 +85,32 @@ class Matrix(object):
 				matrix[length - i - 1][length - j - 1] = matrix[j][length - i - 1]
 				matrix[j][length - i - 1] = temp
 
+	def longestIncreasingPath(self, matrix):
+		"""
+		Find longest increasing path length in a given matrix.
+		Adding edge for small to big number, we can form DAG, therefore doing
+		simple BFS will result in logest path.
+		"""
+		active = [] # all the active vertices
+		level = 0  # current level
+		for i in range(len(matrix)):
+			for j in range(len(matrix[0])):
+				active.append((i, j))
+		while len(active) != 0:
+			next_active = [] # next active level
+			for (i, j) in active:
+				if 0 <= i - 1 < len(matrix) and matrix[i-1][j] > matrix[i][j]:
+					next_active.append((i-1, j))
+				if 0 <= j - 1 < len(matrix[0]) and matrix[i][j-1] > matrix[i][j]:
+					next_active.append((i, j-1))
+				if 0 <= i + 1 < len(matrix) and matrix[i+1][j] > matrix[i][j]:
+					next_active.append((i+1, j))
+				if 0 <= j + 1 < len(matrix[0]) and matrix[i][j+1] > matrix[i][j]:
+					next_active.append((i, j+1))
+			active = next_active
+			level += 1
+		return level
+
 #############						TEST						##############
 matrix = Matrix()
 
@@ -109,3 +135,10 @@ for (got, want) in [ ([[1,2], [3,4]], [[3,1],[4,2]]), \
 	matrix.rotateClockwise(got)
 	assert got == want, \
 		"rotateClockwise({}) = {}; want: {}".format(m, got, want)
+
+###################		 longestIncreasingPath  				################
+for (m, want) in [ ([[1]], 1), ([[9,9,6], [6,6,8], [2,1,1]], 4),\
+					([[3,4,5], [3,2,6], [2,2,1]], 4) ]:
+	got = matrix.longestIncreasingPath(m)
+	assert got == want, \
+		"longestIncreasingPath({}) = {}; want: {}".format(m, got, want)
