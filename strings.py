@@ -155,6 +155,38 @@ class Strings(object):
 			commonIndex += 1
 		return s[:commonIndex]
 
+	def isValidSerialization(self, preorder):
+		"""
+		Given a preorder of a binary tree, check if it's a valid
+		"1,#,#" is valid
+		"1,2,#,#,3,#,#" is valid
+		"1,#,#,4" is NOT valid
+		"""
+		if len(preorder) == 0:
+			return True
+		preorder = preorder.split(",") # split into a list
+		s = [(preorder[0], 0)] # stack keeps track of ordering with status
+		# (i, 0) means left side has not been explored
+		for i in range(1, len(preorder)):
+			if len(s) == 0:
+				# Non-valid tree
+				return False
+			(top, status) = s.pop()
+			if top != '#' and status == 0:
+				# Add the top back with status as 1
+				s.append((top, 1))
+			if top == '#':
+				# Done with the top element's left side, therefore safe to
+				# remove.
+				if len(s) == 0:
+					return False
+				else:
+					s.pop()
+			s.append((preorder[i], 0)) 
+		if len(s) == 1 and preorder[-1] == '#':
+			# It's a valid tree with last element being NULL
+			return True
+		return False
 
 #######################				Test 			##########################
 s = Strings()
@@ -198,3 +230,9 @@ for (strings, want) in [ (["a", "b"], ""), (["ab", "ab"], "ab"), (["foo", "fob",
 	got = s.longestCommonPrefix(strings)
 	assert got == want, \
 		"longestCommonPrefix({}) = {}; want: {}".format(strings, got, want)
+
+for (preorder, want) in [ ("9,3,4,#,#,1,#,#,2,#,6,#,#", True), ("4,#,#", True),\
+	("9,#,#,1", False), ("1,#", False)]:
+	got = s.isValidSerialization(preorder)
+	assert got == want, \
+		"isValidSerialization({}) = {}; want: {}".format(preorder, got, want)
