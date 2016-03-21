@@ -34,6 +34,23 @@ def singleNumber2(lst):
 			groupB ^= num
 	return set([groupA, groupB])
 
+def countBits(num):
+	"""
+	Count the number of 1s in binary form for each number 0 <= i <= num.
+	"""
+	counts = [0] # 0's binary has 0 ones.
+	power = 0 # current power of the number.
+	while 2 ** power <= num:
+		counts.append(1) # Any power of 2 has exactly 1 one.
+		for i in range(1, 2 ** power):
+			if 2 ** power + i > num:
+				# added all the ones, done.
+				break
+			else:
+				counts.append(counts[i] + 1)
+		power += 1
+	return counts 
+
 ################################ TEST  #########################################
 
 ################################ Single Number #################################
@@ -48,3 +65,10 @@ for (lst, want) in [([1,2,3,3], set([1,2])), ([4,5,4,5,1,2], set([1,2])), \
 	got = singleNumber2(lst)
 	assert got == want, \
 		"singleNumber2({}) = {}; want: {}".format(lst, got, want)
+
+################################ Count bits #################################
+for (num, want) in [(2,[0,1,1]), (3,[0,1,1,2]), (10,[0,1,1,2,1,2,2,3,1,2,2]), \
+	(16, [0,1,1,2,1,2,2,3,1,2,2,3,2,3,3,4,1])]:
+	got = countBits(num)
+	assert got == want, \
+		"countBits({}) = {}; want: {}".format(num, got, want)
