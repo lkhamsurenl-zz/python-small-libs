@@ -65,7 +65,7 @@ class Strings(object):
 		return index
 
 	def __findValue(self, s, start):
-		index = start	
+		index = start
 		while index < len(s):
 			if s[index] == "{":
 				end = index + 1
@@ -86,7 +86,7 @@ class Strings(object):
 		Given a list of strings, group anagrams.
 		[loop, polo, pool, aba, yo, baa] -> [[loop, polo, pool], [aba, baa], [yo]]
 		"""
-		mapping = {} # key: sorted string; value: list of anagrams associated 
+		mapping = {} # key: sorted string; value: list of anagrams associated
 		# with the given sorted string.
 		for s in strings:
 			sorted_s = "".join(sorted(s))
@@ -182,11 +182,62 @@ class Strings(object):
 					return False
 				else:
 					s.pop()
-			s.append((preorder[i], 0)) 
+			s.append((preorder[i], 0))
 		if len(s) == 1 and preorder[-1] == '#':
 			# It's a valid tree with last element being NULL
 			return True
 		return False
+
+	def isValidIPAddress(self, ip):
+		"""
+		Given a string, determine if it's valid IPv4 or IPv6
+		"""
+		if self.isValidIPv4(ip):
+			return "IPv4"
+		if self.isValidIPv6(ip):
+			return "IPv6"
+		return "Neither"
+
+	def isValidIPv4(self, ip):
+		batches = ip.split(".")
+		if len(batches) != 4:
+			return False # length must be 4 batches
+		for batch in batches:
+			if len(batch) == 0 or not batch.isdigit():
+				# batch is empty or not consisting of digits
+				return False
+			# check for leading 0
+			if batch[0] == '0' and len(batch) > 1:
+				return False
+			num = int(batch)
+			# ensure num is btw 0 <= num < 2^8
+			if not (0 <= num < 2**8):
+				return False
+		return True
+
+	def isValidIPv6(self, ip):
+		batches = ip.split(":")
+		if len(batches) != 8:
+			print("length is not valid {}".format(len(batches)))
+			# length of ipv6 must be 8 batches
+			return False
+		for batch in batches:
+			if not self.__isValidHex__(batch):
+				return False
+		return True
+
+	def __isValidHex__(self, batch):
+		# check if given string is a valid hexidecimal
+		batch = batch.lower()
+		if not (0 < len(batch) <= 4):
+			print ("length {} is ussue for {}".format(len(batch), batch))
+			return False
+		for c in batch:
+			# check if each character in string is valid hexadecimal char: 0, 1, .., 9, a, b, c, d, e, f
+			if not c.isdigit() and not ('a' <= c <= 'f'):
+				print ("char {} is failing for batch: {}".format(c, batch))
+				return False
+		return True
 
 #######################				Test 			##########################
 s = Strings()
@@ -236,3 +287,9 @@ for (preorder, want) in [ ("9,3,4,#,#,1,#,#,2,#,6,#,#", True), ("4,#,#", True),\
 	got = s.isValidSerialization(preorder)
 	assert got == want, \
 		"isValidSerialization({}) = {}; want: {}".format(preorder, got, want)
+
+for (ip, want) in [ ('172.16.254.1', 'IPv4'), ('2001:0db8:85a3:0:0:8A2E:0370:7334', 'IPv6'),\
+	('2001:0db8:85a3::8A2E:0370:7334', 'Neither'),('02001:0db8:85a3:0000:0000:8a2e:0370:7334', 'Neither') ]:
+	got = s.isValidIPAddress(ip)
+	assert got == want, \
+		"isValidIPAddress({}) = {}; want {}".format(ip, got, want)
